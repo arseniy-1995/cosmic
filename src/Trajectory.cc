@@ -224,7 +224,7 @@ void Trajectory::DrawTrajectory() const
         trajectoryLine.SetVisAttributes(&trajectoryLineAttribs);
 
 #ifdef isGenElectronGEM
-        if (fParticleDefinition->GetPDGCharge() < 0.) // рисуем только электроны
+        if (true and fParticleDefinition->GetPDGCharge() < 0.) // рисуем только электроны
         {
             pVVisManager->Draw(trajectoryLine);
         }

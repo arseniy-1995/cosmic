@@ -75,7 +75,7 @@ void ActionInitialization::Build() const
     SetUserAction(eventAction);
 
     SetUserAction(new RunAction(eventAction));
-    // SetUserAction(new TrackingAction()); // нужно обязательно подключать, иначе зависает при рисовании траеторий
+    SetUserAction(new TrackingAction()); // нужно обязательно подключать, иначе зависает при рисовании траеторий
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
