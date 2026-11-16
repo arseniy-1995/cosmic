@@ -992,6 +992,49 @@ namespace Cosmic {
             return fVC_Phi[0];
         }
 
+        ///// МЕТОДЫ ДЛЯ GEM
+
+        std::vector<G4int> &Get_GEM_N() { return fGEM_N; }
+
+        std::vector<G4float> &Get_GEM_Edep() { return fGEM_Edep; }
+
+        std::vector<G4float> &Get_GEM_Pos(G4int index = 1)
+        {
+
+            if (index == 1)
+                return fGEM_XPos;
+            if (index == 2)
+                return fGEM_YPos;
+            if (index == 3)
+                return fGEM_ZPos;
+
+            return fGEM_XPos;
+        }
+
+        std::vector<G4float> &Get_GEM_GlobalPos(G4int index = 1)
+        {
+
+            if (index == 1)
+                return fGEM_global_XPos;
+            if (index == 2)
+                return fGEM_global_YPos;
+            if (index == 3)
+                return fGEM_global_ZPos;
+
+            return fGEM_global_XPos;
+        }
+
+        std::vector<G4int> &Get_GEM_TrackID() { return fGEM_TrackID; }
+
+        std::vector<G4float> &Get_GEM_Mass() { return fGEM_Mass; }
+
+        std::vector<G4float> &Get_GEM_KineticEnergy() { return fGEM_KineticEnergy; }
+
+        std::vector<G4float> &Get_GEM_Theta() { return fGEM_Theta; }
+
+        std::vector<G4float> &Get_GEM_Phi() { return fGEM_Phi; }
+
+
         ///
 
         std::vector<G4float> &GetVertexXYZ(G4int index = 1) {

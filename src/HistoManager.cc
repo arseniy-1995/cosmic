@@ -1074,6 +1074,30 @@ namespace Cosmic
 
             /////////////////
 
+            // GEM
+
+#ifdef GEM
+
+            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "TrackID_GEM", fEventAction->Get_GEM_TrackID());
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "E_GEM", fEventAction->Get_GEM_Edep());
+            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "N_GEM",
+                                                 fEventAction->Get_GEM_N()); // column Id = 4 // Число срабатываний
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "X_GEM",
+                                                 fEventAction->Get_GEM_Pos(1)); // column Id = 4 // Локальная точка
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Y_GEM", fEventAction->Get_GEM_Pos(2));
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Z_GEM", fEventAction->Get_GEM_Pos(3));
+            // analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "R_GEM", fEventAction->Get_GEM_Pos(1, 4));
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Mass_GEM", fEventAction->Get_GEM_Mass());
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Energy_GEM", fEventAction->Get_GEM_KineticEnergy());
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Theta_GEM", fEventAction->Get_GEM_Theta());
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Phi_GEM", fEventAction->Get_GEM_Phi());
+
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Xglob_GEM", fEventAction->Get_GEM_GlobalPos(1));
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Yglob_GEM", fEventAction->Get_GEM_GlobalPos(2));
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Zglob_GEM", fEventAction->Get_GEM_GlobalPos(3));
+
+#endif
+
             analysisManager->FinishNtuple(fCurrentNtupleId);
         }
 
