@@ -193,6 +193,9 @@ namespace Cosmic {
     constexpr G4int fNofLayers_plastic_thin_nsys1 = 2; // число тонких пластиков
     constexpr G4int fNofLayers_plastic_thin_nsys2 = 2;
 
+    constexpr G4int fNof_GEM = 3;
+
+
 #ifdef RUN21
     constexpr G4int fNofLayers_plastic_LQ_nsys1 = 2; // число пластиков LQ электронного плеча
     constexpr G4int fNofLayers_plastic_LQ_nsys2 = 2;
@@ -217,7 +220,7 @@ namespace Cosmic {
     constexpr G4double plastic_thin_threshold = 0.1 * MeV;
     constexpr G4double plastic_LQ_threshold = 0.1 * MeV;
     constexpr G4double HadronCalorimeter_threshold = 1.0 * MeV;
-
+    constexpr G4double GEM_threshold_TDC = 0.1 * keV;
     //   constexpr G4double WChamber_threshold = 0.5 * keV;
     //   constexpr G4double VChamber_threshold = 0.5 * keV;
 

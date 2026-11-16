@@ -33,7 +33,7 @@
 #include "G4VSensitiveDetector.hh"
 
 
-#include "DetectorConstruction.hh"
+#include "../DetectorConstruction.hh"
 #include "G4RunManager.hh"
 
 #include <vector>

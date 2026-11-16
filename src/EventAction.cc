@@ -31,21 +31,23 @@
 #include "EventAction.hh"
 #include "EventInfo.hh"
 
-#include "PlasticSD.hh"
-#include "HadronCalorimeterSD.hh"
 #include "ChamberSD.hh"
+#include "HadronCalorimeterSD.hh"
+#include "PlasticSD.hh"
+#include "TaggingSystem/GEMSD.hh"
 
-#include "PlasticHit.hh"
-#include "HadronCalorimeterHit.hh"
 #include "ChamberHit.hh"
+#include "HadronCalorimeterHit.hh"
+#include "PlasticHit.hh"
+#include "TaggingSystem/GEMHit.hh"
 
 #include "G4AnalysisManager.hh"
-#include "G4RunManager.hh"
 #include "G4Event.hh"
-#include "G4SDManager.hh"
 #include "G4HCofThisEvent.hh"
-#include "G4UnitsTable.hh"
+#include "G4RunManager.hh"
+#include "G4SDManager.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4UnitsTable.hh"
 #include "G4ios.hh"
 
 #include "G4TrajectoryContainer.hh"
@@ -62,10 +64,10 @@
 // using std::array;
 //using std::vector;
 
-namespace {
-
-// Utility function which finds a hit collection with the given Id
-// and print warnings if not found
+namespace
+{
+    // Utility function which finds a hit collection with the given Id
+    // and print warnings if not found
     G4VHitsCollection *GetHC(const G4Event *event, G4int collId) {
         auto hce = event->GetHCofThisEvent();
         if (!hce) {
@@ -84,6 +86,24 @@ namespace {
                         "Code001", JustWarning, msg);
         }
         return hc;
+    }
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+namespace Cosmic
+{
+    GEMHitsCollection *EventAction::GetHitsCollection_GEM(G4int hcID, const G4Event *event) const
+    {
+        auto hitsCollection = static_cast<GEMHitsCollection *>(event->GetHCofThisEvent()->GetHC(hcID));
+
+        if (!hitsCollection)
+        {
+            G4ExceptionDescription msg;
+            msg << "Cannot access hitsCollection ID " << hcID;
+            G4Exception("EventAction::GetHitsCollection()", "MyCode0003", FatalException, msg);
+        }
+
+        return hitsCollection;
     }
 
 }
@@ -254,6 +274,55 @@ namespace Cosmic {
 
     void EventAction::EndOfEventAction(const G4Event *event) {
 
+        /////////////////
+
+
+        // extract the trajectories and draw them
+        if (G4VVisManager::GetConcreteInstance())
+        {
+            G4TrajectoryContainer *trajectoryContainer = event->GetTrajectoryContainer();
+
+            G4int n_trajectories = 0;
+            if (trajectoryContainer)
+                n_trajectories = trajectoryContainer->entries();
+            for (G4int i = 0; i < n_trajectories; ++i)
+            {
+                Trajectory *trj = (Trajectory *)((*(event->GetTrajectoryContainer()))[i]);
+
+                // G4cerr << trj->GetParticleName() << G4endl;
+
+                if (trj->GetParticleName() == "opticalphoton")
+                {
+                    trj->SetForceDrawTrajectory(fForcedrawphotons);
+                    trj->SetForceNoDrawTrajectory(fForcenophotons);
+                }
+                trj->DrawTrajectory();
+
+                if (drawFlag == "no")
+                {
+                    1;
+                }
+                if (drawFlag == "all")
+                {
+                    trj->DrawTrajectory();
+                }
+                else if ((drawFlag == "charged") && (trj->GetCharge() != 0.))
+                {
+                    trj->SetForceDrawTrajectory(fForcedrawphotons);
+                    trj->SetForceNoDrawTrajectory(fForcenophotons);
+                    trj->DrawTrajectory();
+                }
+                else if ((drawFlag == "neutral") && (trj->GetCharge() == 0.))
+                {
+                    trj->SetForceDrawTrajectory(fForcedrawphotons);
+                    trj->SetForceNoDrawTrajectory(fForcenophotons);
+                    trj->DrawTrajectory();
+                }
+            }
+        }
+
+
+        //////////////
 
 
         for (int i = 0; i <= 6; i++)
@@ -294,6 +363,8 @@ namespace Cosmic {
 
         // Get hits collections IDs (only once)
         G4SDManager *SDmanp = G4SDManager::GetSDMpointer();
+        GEMHitsCollection *gemHC = nullptr;
+        G4HCofThisEvent *hitsCE = event->GetHCofThisEvent();
 
 #ifndef isGenLQ
 #ifdef PF1_FAT
@@ -339,6 +410,11 @@ namespace Cosmic {
 #endif
 #if defined(VCARM2) && defined(RUN21)
         if (fV_Chamber_nsys2HCID == -1) fV_Chamber_nsys2HCID = SDmanp->GetCollectionID("V_Chamber_nsys2HitsCollection");
+#endif
+
+#ifdef GEM
+        if (fGEMCollID < 0)
+            fGEMCollID = SDmanp->GetCollectionID("gemCollection");
 #endif
 
         auto event_info = (EventInfo *) event->GetUserInformation();
@@ -568,6 +644,27 @@ namespace Cosmic {
         plastic_fat_nsys2Hit[0] = (*plastic_fat_nsys2HC)[plastic_fat_nsys2HC->entries() - 1];
 #endif
 #endif
+
+#ifdef GEM
+        auto GEM_HC = GetHitsCollection_GEM(fGEMCollID, event);
+        if (!GEM_HC)
+            return;
+        GEMHit *GEM_Hit[fNof_GEM + 1];
+        GEM_Hit[0] = (*GEM_HC)[GEM_HC->entries() - 1];
+
+#endif
+
+        if (hitsCE)
+        {
+#ifdef GEM
+            if (fGEMCollID >= 0)
+            {
+                gemHC = (GEMHitsCollection *)(hitsCE->GetHC(fGEMCollID));
+            }
+
+#endif
+        }
+
         plastic_thin_nsys1Hit[0] = (*plastic_thin_nsys1HC)[plastic_thin_nsys1HC->entries() - 1];
         plastic_thin_nsys2Hit[0] = (*plastic_thin_nsys2HC)[plastic_thin_nsys2HC->entries() - 1];
         plastic_LQ_nsys1Hit[0] = (*plastic_LQ_nsys1HC)[plastic_LQ_nsys1HC->entries() - 1];
@@ -583,6 +680,7 @@ namespace Cosmic {
         G4int de_thin_dep_latyer1[2] = {0, 0}; // тонкие счетчики слой1
         G4int de_thin_dep_latyer2[2] = {0, 0}; // тонкие счетчики слой2
         G4int de_LQ_dep[2] = {0, 0}; // счетчики LQ
+        G4int de_GEM_dep[3 + 1] = {0, 0, 0, 0}; // счетчики GEM
 
         //  HadronCalorimeter_nsys1HC->GetHit(0)->
 
@@ -2101,6 +2199,88 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
 
 
 #endif
+
+        // GEM
+
+
+#ifdef GEM
+
+        // fGEM_N[0].assign(fGEM_N[0].size(), 0);
+        // fGEM_N[1].assign(fGEM_N[1].size(), 0);
+
+        G4int index_GEM = 0; // это номер хита, который соответсвует номеру сцинтиллятора
+        G4int index2_GEM = 0; // это номер под которыжмиться в массив
+        G4int GEM_IND = 0;
+
+        if (gemHC)
+        {
+            // for (G4int i = 0; i < (G4int) GEM_HC->GetSize(); i++) {
+            for (G4int i = 0; i <= fNof_GEM; i++)
+            {
+
+                // auto GEM_Hit_ = static_cast<GEMHit *>(GEM_HC->GetHit(i));
+
+                if (i >= 1)
+                    GEM_Hit[i] = (*GEM_HC)[i - 1];
+                auto GEM_Hit_ = GEM_Hit[i];
+
+                // index_GEM = i;
+
+                // index_GEM = GEM_Hit_->GetBlkN();
+
+                // if (index_GEM <= 0) index_GEM = -1;
+
+                //  index_GEM = index_GEM - GEM_IND;
+
+                index_GEM = i;
+
+                //  if (index_GEM >= 0 && index_GEM < 3) {
+
+                //  index2_GEM =  fGEM_N[0] + 1;
+
+                index2_GEM = i;
+
+                fGEM_N[index2_GEM]++;
+                fGEM_N[0]++;
+
+                fGEM_TrackID[index2_GEM] = GEM_Hit_->GetTrackID();
+                fGEM_XPos[index2_GEM] = GEM_Hit_->GetLocalPos().x() / cm;
+                fGEM_YPos[index2_GEM] = GEM_Hit_->GetLocalPos().y() / cm;
+                fGEM_ZPos[index2_GEM] = GEM_Hit_->GetLocalPos().z() / cm;
+                fGEM_RPos[index2_GEM] = GEM_Hit_->GetRho().z() / cm;
+                fGEM_global_XPos[index2_GEM] = GEM_Hit_->GetWorldPos().x() / cm;
+                fGEM_global_YPos[index2_GEM] = GEM_Hit_->GetWorldPos().y() / cm;
+                fGEM_global_ZPos[index2_GEM] = GEM_Hit_->GetWorldPos().z() / cm;
+                fGEM_Theta[index2_GEM] = GEM_Hit_->GetPosTheta() / degree;
+                fGEM_Phi[index2_GEM] = GEM_Hit_->GetPosPhi() / degree;
+                fGEM_Mass[index2_GEM] = GEM_Hit_->GetMass() / MeV;
+                fGEM_KineticEnergy[index2_GEM] = GEM_Hit_->GetKineticEnergy() / MeV;
+
+                // fGEM_TrackID[0] = GEM_Hit_->GetTrackID();
+                // fGEM_XPos[0] = GEM_Hit_->GetLocalPos().x() / cm;
+                // fGEM_YPos[0] = GEM_Hit_->GetLocalPos().y() / cm;
+                // fGEM_ZPos[0] = GEM_Hit_->GetLocalPos().z() / cm;
+                // fGEM_RPos[0] = GEM_Hit_->GetRho().z() / cm;
+                // fGEM_global_XPos[0] = GEM_Hit_->GetWorldPos().x() / cm;
+                // fGEM_global_YPos[0] = GEM_Hit_->GetWorldPos().y() / cm;
+                // fGEM_global_ZPos[0] = GEM_Hit_->GetWorldPos().z() / cm;
+                // fGEM_Theta[0] = GEM_Hit_->GetPosTheta() / degree;
+                // fGEM_Phi[0] = GEM_Hit_->GetPosPhi() / degree;
+                // fGEM_Mass[0] = GEM_Hit_->GetMass() / MeV;
+                // fGEM_KineticEnergy[0] = GEM_Hit_->GetKineticEnergy() / MeV;
+
+                if (GEM_Hit_->GetEdep() > GEM_threshold_TDC)
+                {
+                    de_GEM_dep[index2_GEM] = 1;
+                }
+                continue;
+                // }
+            }
+        }
+
+
+#endif
+
 
         //     totalPlasticEdep = 0.;
         //   totalPlasticTrackLength =0.0;

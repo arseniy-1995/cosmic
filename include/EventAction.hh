@@ -33,9 +33,10 @@
 #include "Constants.hh"
 #include "G4UserEventAction.hh"
 
-#include "PlasticHit.hh"
-#include "HadronCalorimeterHit.hh"
 #include "ChamberHit.hh"
+#include "HadronCalorimeterHit.hh"
+#include "PlasticHit.hh"
+#include "TaggingSystem/GEMHit.hh"
 
 #include "globals.hh"
 
@@ -1011,6 +1012,7 @@ namespace Cosmic {
 
 
     private:
+        GEMHitsCollection *GetHitsCollection_GEM(G4int hcID, const G4Event *event) const;
 
         G4bool flaq_is_trig_tof_fat1[6 + 1] = {true, true, true, true, true, true, true};
         G4bool flaq_is_trig_tof_fat2[8 + 1] = {true, true, true, true, true, true, true, true, true};
@@ -1606,6 +1608,28 @@ namespace Cosmic {
         std::array<std::vector<G4float>, 2> fVC_global_ZPos{
                 {std::vector<G4float>(NVC_WRS + 1, NAN), std::vector<G4float>(NVC_WRS + 1, NAN)}};
 
+        // для GEM
+
+        G4int NGEM = fNof_GEM;
+
+        std::vector<G4int> fGEM_TrackID{std::vector<G4int>(NGEM + 1, -5)};
+        std::vector<G4int> fGEM_N{std::vector<G4int>(NGEM + 1, 0)};
+        std::vector<G4float> fGEM_Edep{std::vector<G4float>(NGEM + 1, 0.)};
+        std::vector<G4float> fGEM_Mass{std::vector<G4float>(NGEM + 1, 1e9)};
+        std::vector<G4float> fGEM_KineticEnergy{std::vector<G4float>(NGEM + 1, 1e9)};
+        std::vector<G4float> fGEM_Theta{std::vector<G4float>(NGEM + 1, 1e9)};
+        std::vector<G4float> fGEM_Phi{std::vector<G4float>(NGEM + 1, 1e9)};
+        std::vector<G4float> fGEM_XPos{std::vector<G4float>(NGEM + 1, 1e9)};
+        std::vector<G4float> fGEM_YPos{std::vector<G4float>(NGEM + 1, 1e9)};
+        std::vector<G4float> fGEM_ZPos{std::vector<G4float>(NGEM + 1, 1e9)};
+        std::vector<G4float> fGEM_RPos{std::vector<G4float>(NGEM + 1, 1e9)};
+
+        std::vector<G4float> fGEM_global_XPos{std::vector<G4float>(NGEM + 1, 1e9)};
+        std::vector<G4float> fGEM_global_YPos{std::vector<G4float>(NGEM + 1, 1e9)};
+        std::vector<G4float> fGEM_global_ZPos{std::vector<G4float>(NGEM + 1, 1e9)};
+
+        ////////
+
 
         // Для GENBOS через индекс вершины
 
@@ -1639,9 +1663,11 @@ namespace Cosmic {
         G4int fV_Chamber_nsys2HCID = -1;
 
 
+        G4int fGEMCollID = -1;
     };
 
-}
+
+} // namespace Cosmic
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
