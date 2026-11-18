@@ -44,212 +44,217 @@
 
 #include "Constants.hh"
 
-G4ThreadLocal G4Allocator<Trajectory> *TrajectoryAllocator = nullptr;
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-// Trajectory::Trajectory()
-//         : G4Trajectory(), fWls(false), fDrawit(false), fForceNoDraw(false), fForceDraw(false) {
-//     fParticleDefinition = nullptr;
-// }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-Trajectory::Trajectory(const G4Track *aTrack) : G4Trajectory(aTrack), fWls(false), fDrawit(false)
+namespace Cosmic
 {
-    fParticleDefinition = aTrack->GetDefinition();
-}
+    G4ThreadLocal G4Allocator<Trajectory> *TrajectoryAllocator = nullptr;
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-Trajectory::Trajectory(Trajectory &right) : G4Trajectory(right), fWls(right.fWls), fDrawit(right.fDrawit)
-{
-    fParticleDefinition = right.fParticleDefinition;
-}
+    // Trajectory::Trajectory()
+    //         : G4Trajectory(), fWls(false), fDrawit(false), fForceNoDraw(false), fForceDraw(false) {
+    //     fParticleDefinition = nullptr;
+    // }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-// Trajectory::~Trajectory() {}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void Trajectory::DrawTrajectory() const
-{
-    // Taken from G4VTrajectory and modified to select colours based on particle
-    // type and to selectively eliminate drawing of certain trajectories.
-
-    if (!fForceDraw && (!fDrawit || fForceNoDraw))
+    Trajectory::Trajectory(const G4Track *aTrack) : G4Trajectory(aTrack), fWls(false), fDrawit(false)
     {
-        return;
+        fParticleDefinition = aTrack->GetDefinition();
     }
-    G4VVisManager *pVVisManager = G4VVisManager::GetConcreteInstance();
-    if (!pVVisManager)
+
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+    Trajectory::Trajectory(Trajectory &right) : G4Trajectory(right), fWls(right.fWls), fDrawit(right.fDrawit)
     {
-        return;
+        fParticleDefinition = right.fParticleDefinition;
     }
-    const G4double markerSize = 0.05;
-    G4bool lineRequired = true;
-    G4bool markersRequired = true;
 
-    G4Polyline trajectoryLine;
-    G4Polymarker stepPoints;
-    G4Polymarker auxiliaryPoints;
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-    for (G4int i = 0; i < GetPointEntries(); ++i)
+    // Trajectory::~Trajectory() {}
+
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+    void Trajectory::DrawTrajectory() const
     {
-        G4VTrajectoryPoint *aTrajectoryPoint = GetPoint(i);
-        const std::vector<G4ThreeVector> *auxiliaries = aTrajectoryPoint->GetAuxiliaryPoints();
-        if (auxiliaries)
+        // Taken from G4VTrajectory and modified to select colours based on particle
+        // type and to selectively eliminate drawing of certain trajectories.
+
+        if (!fForceDraw && (!fDrawit || fForceNoDraw))
         {
-            for (size_t iAux = 0; iAux < auxiliaries->size(); ++iAux)
+            return;
+        }
+        G4VVisManager *pVVisManager = G4VVisManager::GetConcreteInstance();
+        if (!pVVisManager)
+        {
+            return;
+        }
+        const G4double markerSize = 0.05;
+        G4bool lineRequired = true;
+        G4bool markersRequired = true;
+
+        G4Polyline trajectoryLine;
+        G4Polymarker stepPoints;
+        G4Polymarker auxiliaryPoints;
+
+        for (G4int i = 0; i < GetPointEntries(); ++i)
+        {
+            G4VTrajectoryPoint *aTrajectoryPoint = GetPoint(i);
+            const std::vector<G4ThreeVector> *auxiliaries = aTrajectoryPoint->GetAuxiliaryPoints();
+            if (auxiliaries)
             {
-                const G4ThreeVector pos((*auxiliaries)[iAux]);
-                if (lineRequired)
+                for (size_t iAux = 0; iAux < auxiliaries->size(); ++iAux)
                 {
-                    trajectoryLine.push_back(pos);
-                }
-                if (markersRequired)
-                {
-                    auxiliaryPoints.push_back(pos);
+                    const G4ThreeVector pos((*auxiliaries)[iAux]);
+                    if (lineRequired)
+                    {
+                        trajectoryLine.push_back(pos);
+                    }
+                    if (markersRequired)
+                    {
+                        auxiliaryPoints.push_back(pos);
+                    }
                 }
             }
+            const G4ThreeVector pos(aTrajectoryPoint->GetPosition());
+            if (lineRequired)
+            {
+                trajectoryLine.push_back(pos);
+            }
+            if (markersRequired)
+            {
+                stepPoints.push_back(pos);
+            }
         }
-        const G4ThreeVector pos(aTrajectoryPoint->GetPosition());
+
         if (lineRequired)
         {
-            trajectoryLine.push_back(pos);
-        }
-        if (markersRequired)
-        {
-            stepPoints.push_back(pos);
-        }
-    }
+            G4Colour colour;
 
-    if (lineRequired)
-    {
-        G4Colour colour;
+            if (fParticleDefinition == G4OpticalPhoton::OpticalPhotonDefinition())
+            {
+                if (fWls) // WLS photons are red
+                    colour = G4Colour(1., 0., 0.);
+                else
+                { // Scintillation and Cerenkov photons are green
+                    colour = G4Colour(0., 1., 0.);
+                    if (fDrawit_noeff)
+                        colour = G4Colour(1., 1., 0.); // другой цвет для незарегистрированых
+                }
+            }
+            else // All other particles are blue
+            {
+                colour = G4Colour(0., 0., 1.);
+                if (fParticleDefinition->GetPDGCharge() > 0.)
+                {
+                    // colour = G4Colour(1., 0., 0.);
+                    colour = G4Colour(0.0, 0.0, 1.0);
+                }
+                if (fParticleDefinition->GetPDGCharge() == 0.)
+                {
+                    // colour = G4Colour(1., 1., 0.5);
+                    // colour = G4Colour(1.0, 0.0, 0.0);
+                    colour = G4Colour(0.0, 1.0, 0.0);
+                }
+                if (fParticleDefinition->GetPDGCharge() < 0.)
+                {
+                    // colour = G4Colour(0., 0., 1.);
+                    // colour = G4Colour(0.0, 1.0, 0.0);
+                    colour = G4Colour(1.0, 0.0, 0.0);
+                }
 
-        if (fParticleDefinition == G4OpticalPhoton::OpticalPhotonDefinition())
-        {
-            if (fWls) // WLS photons are red
-                colour = G4Colour(1., 0., 0.);
-            else
-            { // Scintillation and Cerenkov photons are green
-                colour = G4Colour(0., 1., 0.);
-                if (fDrawit_noeff)
-                    colour = G4Colour(1., 1., 0.); // другой цвет для незарегистрированых
-            }
-        }
-        else // All other particles are blue
-        {
-            colour = G4Colour(0., 0., 1.);
-            if (fParticleDefinition->GetPDGCharge() > 0.)
-            {
-                // colour = G4Colour(1., 0., 0.);
-                colour = G4Colour(0.0, 0.0, 1.0);
-            }
-            if (fParticleDefinition->GetPDGCharge() == 0.)
-            {
-                // colour = G4Colour(1., 1., 0.5);
-                // colour = G4Colour(1.0, 0.0, 0.0);
-                colour = G4Colour(0.0, 1.0, 0.0);
-            }
-            if (fParticleDefinition->GetPDGCharge() < 0.)
-            {
-                // colour = G4Colour(0., 0., 1.);
-                // colour = G4Colour(0.0, 1.0, 0.0);
-                colour = G4Colour(1.0, 0.0, 0.0);
-            }
+                /////
+                if (fParticleDefinition->GetParticleName() == "proton")
+                {
+                    // colour = G4Colour(0., 0., 1.);
+                    // colour = G4Colour(0.0, 1.0, 0.0);
+                    colour = G4Colour(0.0, 0.0, 1.0);
+                }
 
-            /////
-            if (fParticleDefinition->GetParticleName() == "proton")
-            {
-                // colour = G4Colour(0., 0., 1.);
-                // colour = G4Colour(0.0, 1.0, 0.0);
-                colour = G4Colour(0.0, 0.0, 1.0);
-            }
+                if (fParticleDefinition->GetParticleName() == "deuteron")
+                {
+                    // colour = G4Colour(0., 0., 1.);
+                    // colour = G4Colour(0.0, 1.0, 0.0);
+                    colour = G4Colour(1.0, 0.0, 1.0);
+                }
 
-            if (fParticleDefinition->GetParticleName() == "deuteron")
-            {
-                // colour = G4Colour(0., 0., 1.);
-                // colour = G4Colour(0.0, 1.0, 0.0);
-                colour = G4Colour(1.0, 0.0, 1.0);
-            }
-
-            if (fParticleDefinition->GetParticleName() == "neutron")
-            {
-                // colour = G4Colour(0., 0., 1.);
-                // colour = G4Colour(0.0, 1.0, 0.0);
-                colour = G4Colour(0.0, 1.0, 0.1);
-            }
-            if (fParticleDefinition->GetParticleName() == "e-")
-            {
-                // colour = G4Colour(0., 0., 1.);
-                // colour = G4Colour(0.0, 1.0, 0.0);
-                colour = G4Colour(0.0, 0.0, 1.0);
-            }
-            if (fParticleDefinition->GetParticleName() == "e-")
-            {
-                // colour = G4Colour(0., 0., 1.);
-                // colour = G4Colour(0.0, 1.0, 0.0);
-                colour = G4Colour(0.0, 0.0, 1.0);
-            }
+                if (fParticleDefinition->GetParticleName() == "neutron")
+                {
+                    // colour = G4Colour(0., 0., 1.);
+                    // colour = G4Colour(0.0, 1.0, 0.0);
+                    colour = G4Colour(0.0, 1.0, 0.1);
+                }
+                if (fParticleDefinition->GetParticleName() == "e-")
+                {
+                    // colour = G4Colour(0., 0., 1.);
+                    // colour = G4Colour(0.0, 1.0, 0.0);
+                    colour = G4Colour(0.0, 0.0, 1.0);
+                }
+                if (fParticleDefinition->GetParticleName() == "e-")
+                {
+                    // colour = G4Colour(0., 0., 1.);
+                    // colour = G4Colour(0.0, 1.0, 0.0);
+                    colour = G4Colour(0.0, 0.0, 1.0);
+                }
 
 
 #ifdef isGenElectronGEM
 
-            if (fParticleDefinition->GetPDGCharge() > 0.)
-                colour = G4Colour(1., 0., 0.);
-            if (fParticleDefinition->GetPDGCharge() == 0.)
-                colour = G4Colour(1., 1., 0.5);
-            if (fParticleDefinition->GetPDGCharge() < 0.)
-                colour = G4Colour(0., 0., 1.);
+                if (fParticleDefinition->GetPDGCharge() > 0.)
+                    colour = G4Colour(1., 0., 0.);
+                if (fParticleDefinition->GetPDGCharge() == 0.)
+                    colour = G4Colour(1., 1., 0.5);
+                if (fParticleDefinition->GetPDGCharge() < 0.)
+                    colour = G4Colour(0., 0., 1.);
 
 
-            if (true and (fParticleDefinition->GetPDGCharge() < 0.)) // рисуем только электроны
-            {
-                //  pVVisManager->Draw(trajectoryLine);
-            }
+                if (true and (fParticleDefinition->GetPDGCharge() < 0.)) // рисуем только электроны
+                {
+                    //  pVVisManager->Draw(trajectoryLine);
+                }
 #else
-            pVVisManager->Draw(trajectoryLine);
+                pVVisManager->Draw(trajectoryLine);
 
 #endif
 
-            // if (fParticleDefinition->GetPDGCharge() == 0.) colour = G4Colour(0, 0, 0);
-        }
+                // if (fParticleDefinition->GetPDGCharge() == 0.) colour = G4Colour(0, 0, 0);
+            }
 
-        // colour = G4Colour(0., 0., 1.);
+            // colour = G4Colour(0., 0., 1.);
 
-        G4VisAttributes trajectoryLineAttribs(colour);
-        trajectoryLine.SetVisAttributes(&trajectoryLineAttribs);
+            G4VisAttributes trajectoryLineAttribs(colour);
+            trajectoryLine.SetVisAttributes(&trajectoryLineAttribs);
 
 #ifdef isGenElectronGEM
-        if (true and fParticleDefinition->GetPDGCharge() < 0.) // рисуем только электроны
-        {
-            pVVisManager->Draw(trajectoryLine);
-        }
+            if (true and fParticleDefinition->GetPDGCharge() < 0.) // рисуем только электроны
+            {
+                pVVisManager->Draw(trajectoryLine);
+            }
 #endif
 
 #ifndef isGenElectronGEM
 
-        pVVisManager->Draw(trajectoryLine);
+            pVVisManager->Draw(trajectoryLine);
 
 #endif
-    }
-    if (markersRequired)
-    {
-        auxiliaryPoints.SetMarkerType(G4Polymarker::squares);
-        auxiliaryPoints.SetScreenSize(markerSize);
-        auxiliaryPoints.SetFillStyle(G4VMarker::filled);
-        G4VisAttributes auxiliaryPointsAttribs(G4Colour(0., 1., 1.)); // Magenta
-        auxiliaryPoints.SetVisAttributes(&auxiliaryPointsAttribs);
-        pVVisManager->Draw(auxiliaryPoints);
+        }
+        if (markersRequired)
+        {
+            auxiliaryPoints.SetMarkerType(G4Polymarker::squares);
+            auxiliaryPoints.SetScreenSize(markerSize);
+            auxiliaryPoints.SetFillStyle(G4VMarker::filled);
+            G4VisAttributes auxiliaryPointsAttribs(G4Colour(0., 1., 1.)); // Magenta
+            auxiliaryPoints.SetVisAttributes(&auxiliaryPointsAttribs);
+            pVVisManager->Draw(auxiliaryPoints);
 
-        stepPoints.SetMarkerType(G4Polymarker::circles);
-        stepPoints.SetScreenSize(markerSize);
-        stepPoints.SetFillStyle(G4VMarker::filled);
-        G4VisAttributes stepPointsAttribs(G4Colour(1., 1., 0.)); // Yellow
-        stepPoints.SetVisAttributes(&stepPointsAttribs);
-        pVVisManager->Draw(stepPoints);
+            stepPoints.SetMarkerType(G4Polymarker::circles);
+            stepPoints.SetScreenSize(markerSize);
+            stepPoints.SetFillStyle(G4VMarker::filled);
+            G4VisAttributes stepPointsAttribs(G4Colour(1., 1., 0.)); // Yellow
+            stepPoints.SetVisAttributes(&stepPointsAttribs);
+            pVVisManager->Draw(stepPoints);
+        }
     }
-}
+
+
+} // namespace Cosmic

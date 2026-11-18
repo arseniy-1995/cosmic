@@ -51,146 +51,148 @@ TrackingAction::TrackingAction()
         : G4UserTrackingAction() {}
 */
 
-
-void TrackingAction::PreUserTrackingAction(const G4Track *aTrack)
+namespace Cosmic
 {
+    void TrackingAction::PreUserTrackingAction(const G4Track *aTrack)
+    {
 
-    // Let this be up to the user via vis.mac
-    //  fpTrackingManager->SetStoreTrajectory(true);
+        // Let this be up to the user via vis.mac
+        //  fpTrackingManager->SetStoreTrajectory(true);
 
-    // Use custom trajectory class
-    fpTrackingManager->SetTrajectory(new Trajectory(aTrack));
+        // Use custom trajectory class
+        fpTrackingManager->SetTrajectory(new Trajectory(aTrack));
 
-    // This user track information is only relevant to the photons
-    fpTrackingManager->SetUserTrackInformation(new UserTrackInformation);
+        // This user track information is only relevant to the photons
+        fpTrackingManager->SetUserTrackInformation(new UserTrackInformation);
 
-    /*
-    // Create trajectory only for track in tracking region
-    TrackInformation *trackInfo =
-            (TrackInformation *) (aTrack->GetUserInformation());
+        /*
+        // Create trajectory only for track in tracking region
+        TrackInformation *trackInfo =
+                (TrackInformation *) (aTrack->GetUserInformation());
 
-    if (!trackInfo) {
-        trackInfo = new TrackInformation(aTrack);
+        if (!trackInfo) {
+            trackInfo = new TrackInformation(aTrack);
+            trackInfo->SetIsFirstTankX(true);
+            aTrack->SetUserInformation(trackInfo);
+        }
+
         trackInfo->SetIsFirstTankX(true);
-        aTrack->SetUserInformation(trackInfo);
+        */
     }
 
-    trackInfo->SetIsFirstTankX(true);
-    */
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void TrackingAction::PostUserTrackingAction(const G4Track *aTrack)
-{
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+    void TrackingAction::PostUserTrackingAction(const G4Track *aTrack)
+    {
 
 
-    // G4cerr << "!!!" << G4endl;
-    /*
-        G4TrackVector *secondaries = fpTrackingManager->GimmeSecondaries(); // только вторичные
+        // G4cerr << "!!!" << G4endl;
+        /*
+            G4TrackVector *secondaries = fpTrackingManager->GimmeSecondaries(); // только вторичные
 
-        if (secondaries) {
-            TrackInformation *info = (TrackInformation *) (aTrack->GetUserInformation());
-            size_t nSeco = secondaries->size();
-            if (nSeco > 0) {
-                for (size_t i = 0; i < nSeco; ++i) {
-                    TrackInformation *infoNew = new TrackInformation(info);
-                    (*secondaries)[i]->SetUserInformation(infoNew);
+            if (secondaries) {
+                TrackInformation *info = (TrackInformation *) (aTrack->GetUserInformation());
+                size_t nSeco = secondaries->size();
+                if (nSeco > 0) {
+                    for (size_t i = 0; i < nSeco; ++i) {
+                        TrackInformation *infoNew = new TrackInformation(info);
+                        (*secondaries)[i]->SetUserInformation(infoNew);
+                    }
                 }
             }
-        }
-    */
+        */
 
-    auto trajectory = (Trajectory *)fpTrackingManager->GimmeTrajectory();
-    auto trackInformation = (UserTrackInformation *)aTrack->GetUserInformation();
+        auto trajectory = (Trajectory *)fpTrackingManager->GimmeTrajectory();
+        auto trackInformation = (UserTrackInformation *)aTrack->GetUserInformation();
 
-    // Let's choose to draw only the photons that hit the sphere and a pmt
-    if (aTrack->GetDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())
-    {
-        const G4VProcess *creator = aTrack->GetCreatorProcess();
-        if (creator && creator->GetProcessName() == "OpWLS")
+        // Let's choose to draw only the photons that hit the sphere and a pmt
+        if (aTrack->GetDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())
         {
-            trajectory->WLS();
-            trajectory->SetDrawTrajectory(true);
-        }
+            const G4VProcess *creator = aTrack->GetCreatorProcess();
+            if (creator && creator->GetProcessName() == "OpWLS")
+            {
+                trajectory->WLS();
+                trajectory->SetDrawTrajectory(true);
+            }
 
-        // trajectory->SetDrawTrajectory(true);
-        // trajectory->SetDrawTrajectory_noeff(true); // рисование непопавших в фотокатод другим цветом
+            // trajectory->SetDrawTrajectory(true);
+            // trajectory->SetDrawTrajectory_noeff(true); // рисование непопавших в фотокатод другим цветом
 
 #ifdef isWLSFiber
-        // trajectory->SetDrawTrajectory(true);
-        // trajectory->SetDrawTrajectory_noeff(true); // рисование непопавших в фотокатод другим цветом
+            // trajectory->SetDrawTrajectory(true);
+            // trajectory->SetDrawTrajectory_noeff(true); // рисование непопавших в фотокатод другим цветом
 #endif
 
-        if (1 /*DetectorConstruction::GetSphereOn()*/)
-        {
-            if (
+            if (1 /*DetectorConstruction::GetSphereOn()*/)
+            {
+                if (
 
-                (trackInformation->GetTrackStatus()
+                    (trackInformation->GetTrackStatus()
 #if defined(isRUN23) || defined(isRUN21)
-                 & hitSiPM
+                     & hitSiPM
 #endif
 #ifndef isWLSFiber
 #if defined(isRUN25) || defined(isFEU187)
-                 & hitPMT
+                     & hitPMT
 #endif
 #endif
 #ifdef isWLSFiber
-                 & hitSiPM
+                     & hitSiPM
 #endif
 
-                 )
+                     )
 
-                && (trackInformation->GetTrackStatus()
+                    && (trackInformation->GetTrackStatus()
+#if defined(isRUN25) || defined(isFEU187)
+                        & hitPMT
+#endif
+#ifdef isWLSFiber
+                        & hitSiPM
+#endif
+                        )) // hitSphere
+                {
+                    trajectory->SetDrawTrajectory(true);
+                    // trajectory->SetDrawTrajectory_noeff(true); // рисование непопавших в фотокатод другим цветом
+                    trajectory->SetDrawTrajectory_noeff(false);
+                }
+            }
+            else
+            {
+                if (trackInformation->GetTrackStatus()
+
+#if defined(isRUN23) || defined(isRUN21)
+                    & hitSiPM
+#endif
 #if defined(isRUN25) || defined(isFEU187)
                     & hitPMT
 #endif
-#ifdef isWLSFiber
-                    & hitSiPM
-#endif
-                    )) // hitSphere
-            {
-                trajectory->SetDrawTrajectory(true);
-                // trajectory->SetDrawTrajectory_noeff(true); // рисование непопавших в фотокатод другим цветом
-                trajectory->SetDrawTrajectory_noeff(false);
+
+                )
+                    trajectory->SetDrawTrajectory(true);
+                // trajectory->SetDrawTrajectory(true);
+                trajectory->SetDrawTrajectory_noeff(true); // рисование непопавших в фотокатод другим цветом
+                // 1;
             }
+
+            trajectory->SetDrawTrajectory(true);
+            // trajectory->SetDrawTrajectory_noeff(true); // рисование непопавших в фотокатод другим цветом
+            trajectory->SetDrawTrajectory_noeff(false);
         }
+        // draw all other (not optical photon) trajectories
         else
         {
-            if (trackInformation->GetTrackStatus()
 
-#if defined(isRUN23) || defined(isRUN21)
-                & hitSiPM
-#endif
-#if defined(isRUN25) || defined(isFEU187)
-                & hitPMT
-#endif
-
-            )
-                trajectory->SetDrawTrajectory(true);
-            // trajectory->SetDrawTrajectory(true);
-            trajectory->SetDrawTrajectory_noeff(true); // рисование непопавших в фотокатод другим цветом
-                                                       // 1;
+            trajectory->SetDrawTrajectory(true);
         }
 
-        trajectory->SetDrawTrajectory(true);
-        // trajectory->SetDrawTrajectory_noeff(true); // рисование непопавших в фотокатод другим цветом
+
+        if (trackInformation->GetForceDrawTrajectory())
+        {
+            trajectory->SetDrawTrajectory(true);
+        }
+
+
+        trajectory->SetDrawTrajectory(true); // все траектории
         trajectory->SetDrawTrajectory_noeff(false);
+        // trajectory->SetDrawTrajectory(false);
     }
-    // draw all other (not optical photon) trajectories
-    else
-    {
-
-        trajectory->SetDrawTrajectory(true);
-    }
-
-
-    if (trackInformation->GetForceDrawTrajectory())
-    {
-        trajectory->SetDrawTrajectory(true);
-    }
-
-
-    trajectory->SetDrawTrajectory(true); // все траектории
-    trajectory->SetDrawTrajectory_noeff(false);
-    // trajectory->SetDrawTrajectory(false);
-}
+} // namespace Cosmic

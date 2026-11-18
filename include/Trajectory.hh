@@ -37,46 +37,53 @@
 class G4Polyline;
 class G4ParticleDefinition;
 
-class Trajectory : public G4Trajectory
+namespace Cosmic
 {
-public:
-    Trajectory() = default;
-    Trajectory(const G4Track *aTrack);
-    Trajectory(Trajectory &);
-    ~Trajectory() = default;
 
-    void DrawTrajectory() const override;
 
-    inline void *operator new(size_t);
-    inline void operator delete(void *);
+    class Trajectory : public G4Trajectory
+    {
+    public:
+        Trajectory() = default;
+        Trajectory(const G4Track *aTrack);
+        Trajectory(Trajectory &);
+        ~Trajectory() = default;
 
-    void SetDrawTrajectory(G4bool b) { fDrawit = b; }
-    void SetDrawTrajectory_noeff(G4bool b) { fDrawit_noeff = b; }
-    void WLS() { fWls = true; }
-    void SetForceDrawTrajectory(G4bool b) { fForceDraw = b; }
-    void SetForceNoDrawTrajectory(G4bool b) { fForceNoDraw = b; }
+        void DrawTrajectory() const override;
 
-private:
-    G4bool fWls = false;
-    G4bool fDrawit = false;
-    G4bool fDrawit_noeff = false;
-    G4bool fForceNoDraw = false;
-    G4bool fForceDraw = false;
-    G4ParticleDefinition *fParticleDefinition = nullptr;
-};
+        inline void *operator new(size_t);
+        inline void operator delete(void *);
 
-extern G4ThreadLocal G4Allocator<Trajectory> *TrajectoryAllocator;
+        void SetDrawTrajectory(G4bool b) { fDrawit = b; }
+        void SetDrawTrajectory_noeff(G4bool b) { fDrawit_noeff = b; }
+        void WLS() { fWls = true; }
+        void SetForceDrawTrajectory(G4bool b) { fForceDraw = b; }
+        void SetForceNoDrawTrajectory(G4bool b) { fForceNoDraw = b; }
 
-inline void *Trajectory::operator new(size_t)
-{
-    if (!TrajectoryAllocator)
-        TrajectoryAllocator = new G4Allocator<Trajectory>;
-    return (void *)TrajectoryAllocator->MallocSingle();
-}
+    private:
+        G4bool fWls = false;
+        G4bool fDrawit = false;
+        G4bool fDrawit_noeff = false;
+        G4bool fForceNoDraw = false;
+        G4bool fForceDraw = false;
+        G4ParticleDefinition *fParticleDefinition = nullptr;
+    };
 
-inline void Trajectory::operator delete(void *aTrajectory)
-{
-    TrajectoryAllocator->FreeSingle((Trajectory *)aTrajectory);
-}
+    extern G4ThreadLocal G4Allocator<Trajectory> *TrajectoryAllocator;
+
+    inline void *Trajectory::operator new(size_t)
+    {
+        if (!TrajectoryAllocator)
+            TrajectoryAllocator = new G4Allocator<Trajectory>;
+        return (void *)TrajectoryAllocator->MallocSingle();
+    }
+
+    inline void Trajectory::operator delete(void *aTrajectory)
+    {
+        TrajectoryAllocator->FreeSingle((Trajectory *)aTrajectory);
+    }
+
+
+} // namespace Cosmic
 
 #endif

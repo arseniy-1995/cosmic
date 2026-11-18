@@ -35,20 +35,23 @@
 
 #include "G4UserTrackingAction.hh"
 
-class TrackingAction : public G4UserTrackingAction
+namespace Cosmic
 {
-public:
-    // TrackingAction();
-    // ~TrackingAction(){};
+    class TrackingAction : public G4UserTrackingAction
+    {
+    public:
+        // TrackingAction();
+        // ~TrackingAction(){};
 
-    TrackingAction() = default;
-    ~TrackingAction() = default;
+        TrackingAction() = default;
+        ~TrackingAction() = default;
 
 
-    void PreUserTrackingAction(const G4Track *) override;
-    void PostUserTrackingAction(const G4Track *) override;
+        void PreUserTrackingAction(const G4Track *) override;
+        void PostUserTrackingAction(const G4Track *) override;
 
-private:
-};
+    private:
+    };
+} // namespace Cosmic
 
 #endif
