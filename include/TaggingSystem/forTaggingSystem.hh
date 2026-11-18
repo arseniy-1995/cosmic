@@ -44,6 +44,7 @@
 #include <iostream>
 // #include <TString.h>
 
+
 class DetectorConstruction;
 
 namespace Cosmic
@@ -134,9 +135,9 @@ namespace Cosmic
 
     // class DetectorConstruction;
 
-   // inline void DetectorConstruction::ConstructMagnetD1(){}
+    // inline void DetectorConstruction::ConstructMagnetD1(){}
 
-    //void ConstructTarget();
+    // void ConstructTarget();
     //
     // void ConstructMagnetCell();
     //

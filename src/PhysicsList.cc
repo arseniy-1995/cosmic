@@ -32,7 +32,10 @@
 #include "G4OpticalPhysics.hh"
 #include "G4RadioactiveDecayPhysics.hh"
 
-MyPhysicsList::MyPhysicsList()
+namespace Cosmic
+{
+
+    MyPhysicsList::MyPhysicsList()
 {
 
     SetVerboseLevel(1);
@@ -130,3 +133,6 @@ void MyPhysicsList::SetCuts()
                 "gamma"); // Фотоны тормозного излучения с пробегом < 1 мм не будут рождаться как отдельные частицы
     SetCutValue(1.0 * mm, "e-");
 }
+
+
+} // namespace Cosmic
