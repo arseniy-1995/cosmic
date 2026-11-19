@@ -4,13 +4,12 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include "TaggingSystem/PrimaryGenActionTagSys.hh"
+#include "../TaggingSystem/PrimaryGenActionTagSys.hh"
 
 #include "Constants.hh"
-#include "DetectorConstruction.hh"
 
 
-#include "TaggingSystem/ConstantsTaggSys.hh"
+#include "../TaggingSystem/ConstantsTaggSys.hh"
 
 
 #include <iostream>
@@ -24,7 +23,6 @@
 #include "PrimaryGeneratorMessenger.hh"
 
 #include "Constants.hh"
-#include "DetectorConstruction.hh"
 #include "EventInfo.hh"
 #include "G4BetheHeitler5DModel.hh"
 #include "G4BetheHeitlerModel.hh"

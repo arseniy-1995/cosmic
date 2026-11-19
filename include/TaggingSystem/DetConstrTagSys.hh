@@ -6,11 +6,11 @@
 #define DETCONSTRTAGSYS_HH
 
 #include "Constants.hh"
-#include "DetectorConstruction.hh"
+// #include "DetectorConstruction.hh"
 #include "Randomize.hh"
 
 //#include "ChamberSD.hh"
-#include "DetectorConstruction.hh"
+// #include "DetectorConstruction.hh"
 #include "G4Material.hh"
 #include "G4NistManager.hh"
 //#include "HadronCalorimeterSD.hh"
@@ -45,7 +45,7 @@
 // #include <TString.h>
 
 
-class DetectorConstruction;
+// class DetectorConstruction;
 
 namespace Cosmic
 {
@@ -57,7 +57,9 @@ namespace Cosmic
     {
     public:
         MainVolTaggingSystem(G4RotationMatrix *pRot, const G4ThreeVector &tlate, G4LogicalVolume *pMotherLogical,
-                             G4bool pMany, G4int pCopyNo, DetectorConstruction *c);
+                             G4bool pMany, G4int pCopyNo
+                             //  , DetectorConstruction *c
+        );
 
 
         ////
@@ -148,6 +150,7 @@ namespace Cosmic
         G4VisAttributes *Steel_VisAtt = nullptr;
         G4VisAttributes *Shield_VisAtt = nullptr;
         G4VisAttributes *Gas_VisAtt = nullptr;
+        G4VisAttributes *BerylliumFoil_VisAtt = nullptr;
 
 
         ///
@@ -175,7 +178,7 @@ namespace Cosmic
 
         ///
 
-        DetectorConstruction *fConstructor = nullptr;
+        // DetectorConstruction *fConstructor = nullptr;
 
         G4double housing_x = 0.;
         G4double housing_y = 0.;

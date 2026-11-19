@@ -4,19 +4,19 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include "TaggingSystem/DetConstrTagSys.hh"
+#include "../TaggingSystem/DetConstrTagSys.hh"
 
 #include "Constants.hh"
-#include "DetectorConstruction.hh"
+// #include "DetectorConstruction.hh"
 
-//#include "ChamberSD.hh"
+// #include "ChamberSD.hh"
 #include "DetectorConstruction.hh"
 #include "G4Material.hh"
 #include "G4NistManager.hh"
 //#include "HadronCalorimeterSD.hh"
 //#include "PlasticSD.hh"
 
-#include "TaggingSystem/ConstantsTaggSys.hh"
+#include "../TaggingSystem/ConstantsTaggSys.hh"
 
 #include <G4EllipticalTube.hh>
 #include <G4Trap.hh>
@@ -84,15 +84,17 @@ namespace Cosmic
     // DetectorConstruction::
 
     MainVolTaggingSystem::MainVolTaggingSystem(G4RotationMatrix *pRot, const G4ThreeVector &tlate,
-                                               G4LogicalVolume *pMotherLogical, G4bool pMany, G4int pCopyNo,
-                                               DetectorConstruction *c)
+                                               G4LogicalVolume *pMotherLogical, G4bool pMany, G4int pCopyNo
+                                               //,DetectorConstruction *c
+                                               )
         // Pass info to the G4PVPlacement constructor
         :
         G4PVPlacement(pRot, tlate,
                       // Temp logical volume must be created here
                       new G4LogicalVolume(new G4Box("temp", 1, 1, 1), G4Material::GetMaterial("Air"), "temp", 0, 0, 0),
-                      "housing", pMotherLogical, pMany, pCopyNo, fCheckOverlaps = true),
-        fConstructor(c)
+                      "housing", pMotherLogical, pMany, pCopyNo, fCheckOverlaps = true
+                      // , fConstructor(c)
+        )
     {
 
         Vacuum = G4Material::GetMaterial("Vacuum");
@@ -1897,6 +1899,7 @@ namespace Cosmic
         G4Colour copper_col(1.0, 0.0, 0.0);
         G4Colour steel_col(0., 0.0, 1.0);
         G4Colour gas_col(0.93, 0.77, 0.57);
+        G4Colour berylliumfoil_col(0.8, 0.8, 0.8);
 
         Alum_VisAtt = new G4VisAttributes(alum_col);
         Foil_VisAtt = new G4VisAttributes(alfoil_col);
@@ -1904,7 +1907,7 @@ namespace Cosmic
         Steel_VisAtt = new G4VisAttributes(steel_col);
         Shield_VisAtt = new G4VisAttributes(copper_col);
         Gas_VisAtt = new G4VisAttributes(gas_col);
-
+        BerylliumFoil_VisAtt = new G4VisAttributes(berylliumfoil_col);
     }
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -27,7 +27,7 @@
 /// \file GEMHit.cc
 /// \brief Implementation of the Cosmic::GEMHit class
 
-#include "TaggingSystem/GEMHit.hh"
+#include "../TaggingSystem/GEMHit.hh"
 #include "G4AttDef.hh"
 #include "G4AttDefStore.hh"
 #include "G4AttValue.hh"

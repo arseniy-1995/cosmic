@@ -446,8 +446,7 @@ namespace Cosmic {
         // cm), 0, L0_GEM + D_GEM + Z1_GEM + L_GEM + 2.0 * fScintil_y + 12.* mm);
 
 
-        fMainVolTaggingSystem = new MainVolTaggingSystem(rot_main_vol_tagging_system, pos_main_vol_tagging_system,
-                                                         fWorldLV, false, 0, this);
+        fMainVolTaggingSystem = new MainVolTaggingSystem(rot_main_vol_tagging_system, pos_main_vol_tagging_system, fWorldLV, false, 0);
         // SetLogicalVolume(fHousing_log);
         fMainVolTaggingSystem->SetLogVol();
 

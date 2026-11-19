@@ -33,12 +33,11 @@
 #include "G4VSensitiveDetector.hh"
 
 
-#include "../DetectorConstruction.hh"
 #include "G4RunManager.hh"
 
 #include <vector>
 
-class DetectorConstruction;
+
 class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
@@ -82,7 +81,7 @@ namespace Cosmic
 
         G4int fNofLayers = 1;
 
-        DetectorConstruction *Detector;
+        //  DetectorConstruction *Detector;
 
         // DetectorConstruction* Detector;
         // G4int*                   HitID;
