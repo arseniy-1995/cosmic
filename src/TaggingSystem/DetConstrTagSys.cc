@@ -10,7 +10,6 @@
 // #include "DetectorConstruction.hh"
 
 // #include "ChamberSD.hh"
-#include "DetectorConstruction.hh"
 #include "G4Material.hh"
 #include "G4NistManager.hh"
 //#include "HadronCalorimeterSD.hh"
@@ -52,7 +51,6 @@
 #include "PrimaryGeneratorMessenger.hh"
 
 #include "Constants.hh"
-#include "DetectorConstruction.hh"
 #include "EventInfo.hh"
 #include "G4BetheHeitler5DModel.hh"
 #include "G4BetheHeitlerModel.hh"
