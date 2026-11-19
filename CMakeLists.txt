@@ -107,7 +107,7 @@ if (${OS_NAME} MATCHES "Linux")
 
         foreach (_lib ${gb_libs})
             add_library(${_lib} SHARED IMPORTED
-                    src/TaggingSystem/forTaggingSystem.cc) # STATIC or SHARED
+                    src/TaggingSystem/DetConstrTagSys.cc) # STATIC or SHARED
             set_target_properties(${_lib} PROPERTIES
                     IMPORTED_LOCATION ${F_DIR}/lib${_lib}.so
             )
@@ -177,6 +177,8 @@ endif ()
 #
 add_executable(cosmic cosmic.cc ${sources} ${headers})
 target_link_libraries(cosmic PUBLIC ROOT::RIO ROOT::Net ROOT::MathCore ${ROOT_LIBRARIES} ${Geant4_LIBRARIES})
+
+include_directories(${PROJECT_SOURCE_DIR}/include/TaggingSystem)
 
 # FOR GENBOS
 #target_link_libraries(cosmic PUBLIC ROOT::RIO ROOT::Net ROOT::MathCore ${ROOT_LIBRARIES} ${Geant4_LIBRARIES} ${GENBOSLIBS})

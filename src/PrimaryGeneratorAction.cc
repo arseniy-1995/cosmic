@@ -50,6 +50,7 @@
 
 
 #include "EcoMug/EcoMug.h"
+#include "TaggingSystem/PrimaryGenActionTagSys.hh"
 
 #ifdef GENBOS
 
@@ -66,6 +67,7 @@
 
 namespace Cosmic {
 
+    class ClassGeneratorActionTaggSys;
 
     namespace {
         G4Mutex aMutex = G4MUTEX_INITIALIZER;
@@ -92,9 +94,10 @@ namespace Cosmic {
 
         fEcoMug = std::make_unique<EcoMug>();
 
+        fGeneratorActionTaggSys = new ClassGeneratorActionTaggSys();
+
         gunMessenger = new PrimaryGeneratorMessenger(this); // Вызов конструктора для класса пользовательского ввода
 
-        event_br = new BetheHeitlerGenerator();
 
         fRandomDirection = true;
         fRandomDirection_cosmic = true;
@@ -284,7 +287,8 @@ namespace Cosmic {
 
 #ifdef isGenElectronGEM
 
-            GenerateElectronGEM(anEvent);
+            fGeneratorActionTaggSys->GenerateElectronGEM(anEvent);
+            fParticleGun = fGeneratorActionTaggSys->GetParticleGun();
 
 #endif
             //  GenerateNeutron(anEvent);
@@ -1862,9 +1866,9 @@ namespace Cosmic {
         G4double energy2, theta2, phi2;
 
         G4double Xbeam = 0., Ybeam = 0.;
-        vertex = GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
+        vertex = fGeneratorActionTaggSys->GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
 
-       // vertex = G4ThreeVector(0. * cm, 0. * cm, 310 * mm + 10. * cm);
+        // vertex = G4ThreeVector(0. * cm, 0. * cm, 310 * mm + 10. * cm);
 
         particle1 = particleTable->FindParticle("proton");
         particle2 = particleTable->FindParticle("proton");
@@ -1959,7 +1963,7 @@ namespace Cosmic {
         G4double energy2, theta2, phi2;
 
         G4double Xbeam = 0., Ybeam = 0.;
-        vertex = GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
+        vertex = fGeneratorActionTaggSys->GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
 
         particle = particleTable->FindParticle("neutron");
 
@@ -2013,7 +2017,7 @@ namespace Cosmic {
         G4double energy2, theta2, phi2;
 
         G4double Xbeam = 0., Ybeam = 0.;
-        vertex = GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
+        vertex = fGeneratorActionTaggSys->GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
 
         particle1 = particleTable->FindParticle("proton");
         particle2 = particleTable->FindParticle("neutron");
@@ -2047,7 +2051,7 @@ namespace Cosmic {
             p_pn.mm() = p.mm() = Mp * Mp;
             d.e() = Md; // дейтрон покоиться, развал
             d.mm() = Md * Md;
-            q.e() = virtual_photon_random(); //generate energy virtual photon
+            q.e() = fGeneratorActionTaggSys->virtual_photon_random(); // generate energy virtual photon
             q.z() = q.e();
             pn = q + d;
             M2 = sqrt(pn.mmr());
@@ -2207,7 +2211,7 @@ namespace Cosmic {
         G4double gamma_energy;
 
         G4double Xbeam = 0., Ybeam = 0.;
-        vertex = GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
+        vertex = fGeneratorActionTaggSys->GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
 
         // generate particles
         d_particle = particleTable->FindParticle("deuteron");
@@ -2223,7 +2227,7 @@ namespace Cosmic {
         // default particle kinematic
 
 
-        gamma_energy = virtual_photon_random(); //generate energy virtual photon
+        gamma_energy = fGeneratorActionTaggSys->virtual_photon_random(); // generate energy virtual photon
         // Range of Egamma and p_theta_CM  -  uniform distribution here
 
         // gamma_energy = (10.0 + 690.0 * G4UniformRand()) * MeV;    // from 10 to 700 MeV
@@ -2304,7 +2308,7 @@ namespace Cosmic {
         G4double gamma_energy;
 
         G4double Xbeam = 0., Ybeam = 0.;
-        vertex = GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
+        vertex = fGeneratorActionTaggSys->GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
 
         // generate particles
         d_particle = particleTable->FindParticle("deuteron");
@@ -2414,7 +2418,7 @@ namespace Cosmic {
 
 
         G4double Xbeam = 0., Ybeam = 0.;
-        vertex = GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
+        vertex = fGeneratorActionTaggSys->GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
 
         // generate particles
         gamma_particle = particleTable->FindParticle("gamma");
@@ -2547,7 +2551,7 @@ namespace Cosmic {
 // Vertex position  ------------
 
         G4double Xbeam = 0., Ybeam = 0.;
-        vertex = GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
+        vertex = fGeneratorActionTaggSys->GenVertex(Xbeam, Ybeam, Xsigma_beam, Ysigma_beam);
 
         Egamma = efot * GeV;
 
@@ -2627,30 +2631,6 @@ namespace Cosmic {
     }
 
 
-    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-    G4ThreeVector PrimaryGeneratorAction::GenVertex(G4double X, G4double Y, G4double sigmaX, G4double sigmaY)
-    {
-        static G4ThreeVector position;
-        G4double pos_x, pos_y, pos_z, pos_t;
-#ifdef XY_RAND
-        pos_x = G4RandGauss::shoot(X, sigmaX);
-        pos_y = G4RandGauss::shoot(Y, sigmaY);
-#else
-        pos_x = X;
-        pos_y = Y;
-        sigmaX=0;
-        sigmaY=0;
-#endif
-        do {
-            pos_z = G4UniformRand();
-            pos_t = G4UniformRand();
-        } while (pos_t > (1.0 - pos_z));
-        pos_z *= (G4UniformRand() > 0.5) ? cell_z_size_2 : -cell_z_size_2;
-        // pos_z *= cm;
-
-        position = G4ThreeVector(pos_x, pos_y, pos_z);
-        return position;
-    }
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -2762,55 +2742,6 @@ while (partid[i] >= 0 && partid[i] < 64)
 #endif //GENBOS
     }
 
-    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-    G4double PrimaryGeneratorAction::virtual_photon_distrib(G4double Egamma) {
-        G4double Eelectron = 2000.0;
-        G4double fl1, fl2, f1, f2, sl;
-        G4double x = Egamma / Eelectron;
-        G4double Egamma_distr_temp;
-
-        // Это код из Томска
-        //  fl1 = 2. * Eelectron * (Eelectron - Egamma) / Me / (2. * Eelectron - Egamma);
-        //  fl2 = (2. * Eelectron - Egamma) / Egamma;
-        //  f1 = 2. * (1. - x + pow(x, 2.0) / 2.);
-        //  f2 = pow(x, 2.0) / 2.;
-        //  sl = x - 1.;
-        //  Egamma_distr_temp = (alpha_em * (f1 * log10(fabs(fl1)) + f2 * log10(fabs(fl2)) + sl) / M_PI);
-
-        //G4double theta_e_max = 5.*M_PI/180.;
-        G4double theta_e_max = 84.0 * pow(10.0, -3); //84 mrad
-        Eelectron = 800.0;
-        Egamma_distr_temp = (2.0 * alpha_em / M_PI) *
-                            ((1. - x + pow(x, 2.0) / 2.) * log(fabs((Eelectron - Egamma) * theta_e_max / (Me * x))) -
-                             (1. - x));
-
-        return Egamma_distr_temp;
-    }
-
-    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-    G4double PrimaryGeneratorAction::virtual_photon_random(G4double Egamma_min, G4double Egamma_max)
-    {
-        G4double r1, r2, Egamma, y;
-
-        // G4double Egamma_min = 10., Egamma_max = 700.;
-        do {
-            // r1 = rand() / 2147483647.;
-            // r2 = rand() / 2147483647.;
-            r1 = G4UniformRand();
-            r2 = G4UniformRand();
-            //  Egamma = 145. * exp(r1 * log(10.)); // Энергия виртуального фотона в диапозоне 145...1450 МэВ
-            //  y = 0.033 * r2;
-
-            Egamma = Egamma_min * exp(r1 * log(Egamma_max /
-                                               Egamma_min)); // Энергия виртуального фотона в диапозоне Egamma_min...Egamma_max
-            y = 0.065 * r2; // максимум 0,065
-
-        } while (y > virtual_photon_distrib(Egamma));
-//cerr<<y<<"\t"<<dal(om)<<endl;
-        return Egamma;
-    }
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 }

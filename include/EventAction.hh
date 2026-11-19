@@ -32,6 +32,7 @@
 
 #include "Constants.hh"
 #include "G4UserEventAction.hh"
+#include "TaggingSystem/ConstantsTaggSys.hh"
 
 #include "ChamberHit.hh"
 #include "HadronCalorimeterHit.hh"

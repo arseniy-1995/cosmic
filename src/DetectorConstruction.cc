@@ -27,7 +27,8 @@
 /// \file DetectorConstruction.cc
 /// \brief Implementation of the Cosmic::DetectorConstruction class
 
-#include "TaggingSystem/forTaggingSystem.hh"
+#include "TaggingSystem/ConstantsTaggSys.hh"
+#include "TaggingSystem/DetConstrTagSys.hh"
 
 #include "ChamberSD.hh"
 #include "DetectorConstruction.hh"

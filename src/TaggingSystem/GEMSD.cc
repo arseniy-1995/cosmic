@@ -27,9 +27,9 @@
 /// \file ChamberSD.cc
 /// \brief Implementation of the Cosmic::ChamberSD class
 
-#include "../../include/TaggingSystem/GEMSD.hh"
+#include "TaggingSystem/GEMSD.hh"
 #include "DetectorConstruction.hh"
-#include "../../include/TaggingSystem/GEMHit.hh"
+#include "TaggingSystem/GEMHit.hh"
 
 #include "G4HCofThisEvent.hh"
 #include "G4Step.hh"
