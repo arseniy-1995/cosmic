@@ -287,6 +287,7 @@ namespace Cosmic {
 
 #ifdef isGenElectronGEM
 
+            // GenerateElectronGEM(anEvent);
             fGeneratorActionTaggSys->GenerateElectronGEM(anEvent);
             fParticleGun = fGeneratorActionTaggSys->GetParticleGun();
 

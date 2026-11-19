@@ -45,7 +45,7 @@
 #include "Riostream.h"
 #include "TFoamIntegrand.h"
 #include "TMath.h"
-#include "TaggingSystem/DetConstrTagSys.hh"
+#include "TaggingSystem/PrimaryGenActionTagSys.hh"
 
 // #include "GenbosClass.hh"
 
@@ -95,7 +95,7 @@ namespace u = CLHEP;
 namespace Cosmic
 {
 
-    class BetheHeitlerGenerator;
+    // class BetheHeitlerGenerator;
     class ClassGeneratorActionTaggSys;
 
     /// The primary generator action class with particle gum.
