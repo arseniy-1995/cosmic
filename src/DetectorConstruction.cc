@@ -35,6 +35,7 @@
 #include "G4NistManager.hh"
 #include "HadronCalorimeterSD.hh"
 #include "PlasticSD.hh"
+#include "TaggingSystem/GEMSD.hh"
 
 #include <G4EllipticalTube.hh>
 #include <G4Trap.hh>
@@ -92,6 +93,11 @@ namespace Cosmic {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
     DetectorConstruction::~DetectorConstruction() {
+
+        if (fMainVolTaggingSystem)
+        {
+            delete fMainVolTaggingSystem;
+        }
     }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -429,37 +435,20 @@ namespace Cosmic {
                 fCheckOverlaps);  // checking overlaps
 
 
-        // поворот мишени
+        G4ThreeVector pos_main_vol_tagging_system = G4ThreeVector(0, 0, 0);
+        G4RotationMatrix *rot_main_vol_tagging_system = new G4RotationMatrix();
 
-        auto rot_for_world_target = new G4RotationMatrix();
-        rot_for_world_target->rotateY(alpha0_GEM);
+        // rot_main_vol_tagging_system = &Rotate90Y;
+        //rot_main_vol_tagging_system->rotateZ(90. * degree);
+       // rot_main_vol_tagging_system->rotateX(180. * degree);
+        // pos_main_vol_tagging_system = G4ThreeVector((X30_GEM + fScintil_z - 1.5 * cm + 0.5 * cm - 2.0 * cm + 1.2 *
+        // cm), 0, L0_GEM + D_GEM + Z1_GEM + L_GEM + 2.0 * fScintil_y + 12.* mm);
 
-        G4ThreeVector size_world_rot(0.15 * m, 0.1 * m, 0.3 * m);
 
-        G4ThreeVector world_rot_pos = G4ThreeVector(0., 0., 0.);
-
-
-#ifndef isGenElectronGEM
-        size_world_rot = G4ThreeVector(0.15 * m, 0.1 * m, 0.3 * m);
-#endif
-
-#ifndef isGenElectronGEM
-        world_rot_pos = G4ThreeVector(0.0 * m, 0.0 * m, 0.0 * m);
-        // world_rot_pos = G4ThreeVector( -0.2 * m, -0.2 * m, 0.0 * m);
-#endif
-
-        G4Box *world_box_rot = new G4Box("WorldRot", size_world_rot.x(), size_world_rot.y(), size_world_rot.z());
-
-        auto VacuumMaterial = G4Material::GetMaterial("Vacuum");
-        // auto fWorldRotMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
-        // auto fWorldRotMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
-        auto fWorldRotMaterial = VacuumMaterial;
-        fWorldLV_rot = new G4LogicalVolume(world_box_rot, fWorldRotMaterial, "World_rot_log", 0, 0, 0);
-        fWorldLV_rot->SetVisAttributes(Gas_VisAtt);
-
-        auto worldPV_rot = new G4PVPlacement(rot_for_world_target, world_rot_pos, fWorldLV_rot, "World_rot", fWorldLV,
-                                             false, fCheckOverlaps);
-
+        /// fMainVolTaggingSystem = new MainVolTaggingSystem(rot_main_vol_tagging_system, pos_main_vol_tagging_system,
+        /// fWorldLV, false, 0, this);
+        // SetLogicalVolume(fHousing_log);
+        ///  fMainVolTaggingSystem->SetLogVol();
 
         // Plastics
 
@@ -763,46 +752,7 @@ namespace Cosmic {
 #endif // LOWQ1 or LOWQ2
 
 
-#ifdef TARGET
-        ConstructTarget();
-#endif // TARGET
 
-        //МАГНИТЫ
-
-#ifdef TARGET
-        //////////////////////////////////////////////////////////////////////
-        // 		Magnet
-        //////////////////////////////////////////////////////////////////////
-#ifdef MAGNET_CELL
-        ConstructMagnetCell();
-#endif
-
-#endif // TARGET
-#ifdef MAGNET_D2
-
-        ConstructMagnetD2();
-
-#endif // MAGNET_D2
-
-#ifdef GEM
-        ConstructGEM();
-#endif
-
-#ifdef MAGNET_D1
-        ConstructMagnetD1();
-#endif
-
-#ifdef MAGNET_D3
-        ConstructMagnetD3();
-#endif
-
-#ifdef MAGNET_QF
-        ConstructMagnetQF();
-#endif
-
-#ifdef MAGNET_QD
-        ConstructMagnetQD();
-#endif
 
 
         // MRPC
@@ -887,7 +837,6 @@ namespace Cosmic {
         // Visualization attributes
         //
         fWorldLV->SetVisAttributes(G4VisAttributes::GetInvisible());
-        fWorldLV_rot->SetVisAttributes(G4VisAttributes::GetInvisible());
 
         auto simpleBoxVisAtt = new G4VisAttributes(G4Colour(1.0, 1.0, 1.0));
         simpleBoxVisAtt->SetVisibility(true);
@@ -2864,6 +2813,28 @@ new G4PVPlacement(G4Transform3D(RotateNull,
 #endif
 
 
+#ifdef GEM
+
+        if (!fGEM_SD.Get())
+        {
+            G4cout << "Construction /gemSD" << G4endl;
+            GEMSD *gem_SD = new GEMSD("/gemSD", "gemCollection", fNof_GEM);
+            gem_SD->SetDiscrThres(GEM_threshold_TDC);
+            // gem_SD->SetDiscrThres(0.1*MeV);
+            fGEM_SD.Put(gem_SD);
+        }
+        sdManager->AddNewDetector(fGEM_SD.Get());
+        // SetSensitiveDetector(box_GEM_log, fGEM_SD.Get());
+        if (fMainVolTaggingSystem != nullptr)
+        {
+            SetSensitiveDetector(fMainVolTaggingSystem->GetLogGEMbox(), fGEM_SD.Get());
+            // SetSensitiveDetector("PhotonDet_LV", fGEM_SD.Get(), true);
+            // box_GEM_log->SetSensitiveDetector(fGEM_SD);
+        }
+
+
+#endif
+
         // END sensitive detector for proton plastic
 
 
@@ -2932,7 +2903,11 @@ new G4PVPlacement(G4Transform3D(RotateNull,
         G4ChordFinder *fLocalChordFinder_D2 = new G4ChordFinder(fLocalMagneticField_D2, fMinStep, fLocalStepper_D2);
         fLocalFieldManager_D2->SetChordFinder(fLocalChordFinder_D2);
 
-        fLogicD2gap->SetFieldManager(fLocalFieldManager_D2, allLocal);
+        // fLogicD2gap->SetFieldManager(fLocalFieldManager_D2, allLocal);
+        if (fMainVolTaggingSystem != nullptr)
+        {
+            fMainVolTaggingSystem->GetLogD2gap()->SetFieldManager(fLocalFieldManager_D2, allLocal);
+        }
 
         ////
 
@@ -2953,8 +2928,14 @@ new G4PVPlacement(G4Transform3D(RotateNull,
             new G4ChordFinder(fLocalMagneticField_D2_add, fMinStep, fLocalStepper_D2_add);
         fLocalFieldManager_D2_add->SetChordFinder(fLocalChordFinder_D2_add);
 
-        fLogicD2gap_add1->SetFieldManager(fLocalFieldManager_D2_add, allLocal);
-        fLogicD2gap_add2->SetFieldManager(fLocalFieldManager_D2_add, allLocal);
+        // fLogicD2gap_add1->SetFieldManager(fLocalFieldManager_D2_add, allLocal);
+        //  fLogicD2gap_add2->SetFieldManager(fLocalFieldManager_D2_add, allLocal);
+
+        if (fMainVolTaggingSystem != nullptr)
+        {
+            fMainVolTaggingSystem->GetLogD2gap_add1()->SetFieldManager(fLocalFieldManager_D2_add, allLocal);
+            fMainVolTaggingSystem->GetLogD2gap_add2()->SetFieldManager(fLocalFieldManager_D2_add, allLocal);
+        }
 
 #endif
 
@@ -2977,7 +2958,11 @@ new G4PVPlacement(G4Transform3D(RotateNull,
         G4ChordFinder *fLocalChordFinder_D1 = new G4ChordFinder(fLocalMagneticField_D1, fMinStep, fLocalStepper_D1);
         fLocalFieldManager_D1->SetChordFinder(fLocalChordFinder_D1);
 
-        fLogicD1gap->SetFieldManager(fLocalFieldManager_D1, allLocal);
+        //  fLogicD1gap->SetFieldManager(fLocalFieldManager_D1, allLocal);
+        if (fMainVolTaggingSystem != nullptr)
+        {
+            fMainVolTaggingSystem->GetLogD1gap()->SetFieldManager(fLocalFieldManager_D1, allLocal);
+        }
 
 #endif
 
@@ -2999,7 +2984,11 @@ new G4PVPlacement(G4Transform3D(RotateNull,
         G4ChordFinder *fLocalChordFinder_D3 = new G4ChordFinder(fLocalMagneticField_D3, fMinStep, fLocalStepper_D3);
         fLocalFieldManager_D3->SetChordFinder(fLocalChordFinder_D3);
 
-        fLogicD3gap->SetFieldManager(fLocalFieldManager_D3, allLocal);
+        // fLogicD3gap->SetFieldManager(fLocalFieldManager_D3, allLocal);
+        if (fMainVolTaggingSystem != nullptr)
+        {
+            fMainVolTaggingSystem->GetLogD3gap()->SetFieldManager(fLocalFieldManager_D3, allLocal);
+        }
 #endif
 
 
@@ -3007,7 +2996,12 @@ new G4PVPlacement(G4Transform3D(RotateNull,
 
         // По умолчанию осью симметрии является ось Z.
         // G4ThreeVector origin_QF(0., 0., 0.);
-        G4ThreeVector origin_QF(x_pos_qf, y_pos_qf, z_pos_qf);
+        // G4ThreeVector origin_QF(x_pos_qf, y_pos_qf, z_pos_qf);
+        G4ThreeVector origin_QF(0., 0., 0.);
+        if (fMainVolTaggingSystem != nullptr)
+        {
+            origin_QF = *(fMainVolTaggingSystem->GetPosQF());
+        }
         G4RotationMatrix *rotation_QF = new G4RotationMatrix(); // по умолчанию без вращения
         rotation_QF->rotateY(alpha0_GEM);
 
@@ -3029,7 +3023,11 @@ new G4PVPlacement(G4Transform3D(RotateNull,
         fieldMgr_QF->SetChordFinder(fLocalChordFinder_QF);
 
 
-        fLogicQFgap->SetFieldManager(fieldMgr_QF, allLocal);
+        // fLogicQFgap->SetFieldManager(fieldMgr_QF, allLocal);
+        if (fMainVolTaggingSystem != nullptr)
+        {
+            fMainVolTaggingSystem->GetLogQFgap()->SetFieldManager(fieldMgr_QF, allLocal);
+        }
 
 #endif
 
@@ -3037,7 +3035,12 @@ new G4PVPlacement(G4Transform3D(RotateNull,
 
         // По умолчанию осью симметрии является ось Z.
         // G4ThreeVector origin_QD(0., 0., 0.);
-        G4ThreeVector origin_QD(x_pos_qd, y_pos_qd, z_pos_qd);
+        // G4ThreeVector origin_QD(x_pos_qd, y_pos_qd, z_pos_qd);
+        G4ThreeVector origin_QD(0., 0., 0.);
+        if (fMainVolTaggingSystem != nullptr)
+        {
+            origin_QD = *(fMainVolTaggingSystem->GetPosQD());
+        }
         G4RotationMatrix *rotation_QD = new G4RotationMatrix(); // по умолчанию без вращения
         rotation_QD->rotateY(-theta0_GEM);
         // G4QuadrupoleMagField*
@@ -3058,7 +3061,11 @@ new G4PVPlacement(G4Transform3D(RotateNull,
         fieldMgr_QD->SetChordFinder(fLocalChordFinder_QD);
 
 
-        fLogicQDgap->SetFieldManager(fieldMgr_QD, allLocal);
+        // fLogicQDgap->SetFieldManager(fieldMgr_QD, allLocal);
+        if (fMainVolTaggingSystem != nullptr)
+        {
+            fMainVolTaggingSystem->GetLogQDgap()->SetFieldManager(fieldMgr_QD, allLocal);
+        }
 
 #endif
 

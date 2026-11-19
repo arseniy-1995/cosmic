@@ -82,10 +82,124 @@ namespace Cosmic
     // class BetheHeitlerGenerator;
     // class DetectorConstruction;
 
+    // DetectorConstruction::
+
+    MainVolTaggingSystem::MainVolTaggingSystem(G4RotationMatrix *pRot, const G4ThreeVector &tlate,
+                                               G4LogicalVolume *pMotherLogical, G4bool pMany, G4int pCopyNo,
+                                               DetectorConstruction *c)
+        // Pass info to the G4PVPlacement constructor
+        :
+        G4PVPlacement(pRot, tlate,
+                      // Temp logical volume must be created here
+                      new G4LogicalVolume(new G4Box("temp", 1, 1, 1), G4Material::GetMaterial("Air"), "temp", 0, 0, 0),
+                      "housing", pMotherLogical, pMany, pCopyNo, fCheckOverlaps = true),
+        fConstructor(c)
+    {
+
+        Vacuum = G4Material::GetMaterial("Vacuum");
+        Iron = G4Material::GetMaterial("Iron");
+        Steel = G4Material::GetMaterial("Steel");
+        Beryllium = G4Material::GetMaterial("Beryllium");
+        //  auto Air_material = G4Material::GetMaterial("G4_AIR");
+        auto Air_material = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
+
+        housing_x = 1.0 * m;
+        housing_y = 1.0 * m;
+        housing_z = 3.0 * m;
+
+        fHousing_box = new G4Box("housing_box", housing_x / 2., housing_y / 2., housing_z / 2.);
+        fHousing_log = new G4LogicalVolume(fHousing_box, Air_material, "housing_log", 0, 0, 0);
+
+        fHousing_phys = new G4PVPlacement(0, G4ThreeVector(), fHousing_log, "housing_phys", 0, false, fCheckOverlaps);
+
+        // fConstructor->fHousing_log = fHousing_log;
+        //  fConstructor->fHousing_phys = fHousing_phys;
+
+        fWorldLV = fHousing_log;
+
+        DefineRotationMatrices();
+        VisAttributes();
+        SurfaceProperties();
+
+        ////
+        // поворот мишени
+
+        auto rot_for_world_target = new G4RotationMatrix();
+        rot_for_world_target->rotateY(alpha0_GEM);
+
+        G4ThreeVector size_world_rot(0.15 * m, 0.1 * m, 0.3 * m);
+
+        G4ThreeVector world_rot_pos = G4ThreeVector(0., 0., 0.);
+
+
+#ifndef isGenElectronGEM
+        size_world_rot = G4ThreeVector(0.15 * m, 0.1 * m, 0.3 * m);
+#endif
+
+#ifndef isGenElectronGEM
+        world_rot_pos = G4ThreeVector(0.0 * m, 0.0 * m, 0.0 * m);
+        // world_rot_pos = G4ThreeVector( -0.2 * m, -0.2 * m, 0.0 * m);
+#endif
+
+        G4Box *world_box_rot = new G4Box("WorldRot", size_world_rot.x(), size_world_rot.y(), size_world_rot.z());
+
+        auto VacuumMaterial = G4Material::GetMaterial("Vacuum");
+        // auto fWorldRotMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
+        // auto fWorldRotMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
+        auto fWorldRotMaterial = VacuumMaterial;
+        fWorldLV_rot = new G4LogicalVolume(world_box_rot, fWorldRotMaterial, "World_rot_log", 0, 0, 0);
+        fWorldLV_rot->SetVisAttributes(Gas_VisAtt);
+
+        auto worldPV_rot = new G4PVPlacement(rot_for_world_target, world_rot_pos, fWorldLV_rot, "World_rot", fWorldLV,
+                                             false, fCheckOverlaps);
+
+        ///
+#ifdef TARGET
+        ConstructTarget();
+#endif // TARGET
+
+        // МАГНИТЫ
+
+#ifdef TARGET
+        //////////////////////////////////////////////////////////////////////
+        // 		Magnet
+        //////////////////////////////////////////////////////////////////////
+#ifdef MAGNET_CELL
+        ConstructMagnetCell();
+#endif
+
+#endif // TARGET
+#ifdef MAGNET_D2
+
+        ConstructMagnetD2();
+
+#endif // MAGNET_D2
+
+#ifdef GEM
+        ConstructGEM();
+#endif
+
+#ifdef MAGNET_D1
+        ConstructMagnetD1();
+#endif
+
+#ifdef MAGNET_D3
+        ConstructMagnetD3();
+#endif
+
+#ifdef MAGNET_QF
+        ConstructMagnetQF();
+#endif
+
+#ifdef MAGNET_QD
+        ConstructMagnetQD();
+#endif
+    }
+
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-    void DetectorConstruction::ConstructTarget()
+    void MainVolTaggingSystem::ConstructTarget()
     {
 
 #ifdef TARGET
@@ -648,7 +762,7 @@ namespace Cosmic
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-    void DetectorConstruction::ConstructMagnetCell()
+    void MainVolTaggingSystem::ConstructMagnetCell()
     {
 
         // МАГНИТЫ
@@ -716,7 +830,7 @@ namespace Cosmic
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-    void DetectorConstruction::ConstructMagnetD2()
+    void MainVolTaggingSystem::ConstructMagnetD2()
     {
 
 #ifdef MAGNET_D2
@@ -1325,7 +1439,7 @@ namespace Cosmic
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-    void DetectorConstruction::ConstructMagnetD1()
+    void MainVolTaggingSystem::ConstructMagnetD1()
     {
 #ifdef MAGNET_D1
         auto Hall_log = fWorldLV;
@@ -1386,7 +1500,7 @@ namespace Cosmic
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-    void DetectorConstruction::ConstructMagnetD3()
+    void MainVolTaggingSystem::ConstructMagnetD3()
     {
 #ifdef MAGNET_D3
         auto Hall_log = fWorldLV;
@@ -1447,7 +1561,7 @@ namespace Cosmic
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-    void DetectorConstruction::ConstructMagnetQF()
+    void MainVolTaggingSystem::ConstructMagnetQF()
     {
 #ifdef MAGNET_QF
 
@@ -1508,7 +1622,7 @@ namespace Cosmic
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-    void DetectorConstruction::ConstructMagnetQD()
+    void MainVolTaggingSystem::ConstructMagnetQD()
     {
 #ifdef MAGNET_QD
 
@@ -1569,7 +1683,7 @@ namespace Cosmic
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-    void DetectorConstruction::ConstructGEM()
+    void MainVolTaggingSystem::ConstructGEM()
     {
 
         auto AirMaterial = G4Material::GetMaterial("Air");
@@ -1768,6 +1882,69 @@ namespace Cosmic
         new G4PVPlacement(rot, pos3, box_all_log, "GEM3Frame_phys", fWorldLV, false, 3, fCheckOverlaps);
     }
 
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+    void MainVolTaggingSystem::VisAttributes()
+    {
+        G4Colour alum_col(0.0, 0.8, 0.8);
+        G4Colour alfoil_col(0.9, 0.9, 0.9);
+        G4Colour copper_col(1.0, 0.0, 0.0);
+        G4Colour steel_col(0., 0.0, 1.0);
+        G4Colour gas_col(0.93, 0.77, 0.57);
+
+        Alum_VisAtt = new G4VisAttributes(alum_col);
+        Foil_VisAtt = new G4VisAttributes(alfoil_col);
+        Mag_VisAtt = new G4VisAttributes(copper_col);
+        Steel_VisAtt = new G4VisAttributes(steel_col);
+        Shield_VisAtt = new G4VisAttributes(copper_col);
+        Gas_VisAtt = new G4VisAttributes(gas_col);
+
+        fWorldLV_rot->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+        G4VisAttributes *housing_va = new G4VisAttributes(G4Colour(0.8, 0.8, 0.8));
+        fHousing_log->SetVisAttributes(housing_va);
+        // fHousing_log->SetVisAttributes(G4VisAttributes::GetInvisible());
+    }
+
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+    void MainVolTaggingSystem::SurfaceProperties() {}
+
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+    void MainVolTaggingSystem::DefineRotationMatrices()
+    {
+        ////////////////////////////////////////////////////////////////////////////////
+        // ROTATION MATRICES :
+        ////////////////////////////////////////////////////////////////////////////////
+
+        //   Rotate30X.rotateX(-30*deg);
+        Rotate180X.rotateX(180 * deg);
+        Rotate180Y.rotateY(180 * deg);
+        Rotate180Z.rotateZ(180 * deg);
+        Rotate270X.rotateX(-90 * deg);
+        Rotate90X.rotateX(90 * deg);
+        Rotate9X.rotateX(9 * deg);
+        Rotate99X.rotateX(99 * deg);
+        Rotate45X.rotateX(45 * deg);
+        Rotate45X180Z.rotateX(45 * deg);
+        Rotate45X180Z.rotateZ(180 * deg);
+        Rotate10X.rotateX(10 * deg);
+        Rotate25X.rotateX(25 * deg);
+        Rotate65X.rotateX(65 * deg);
+        Rotate90Y.rotateY(90 * deg);
+        Rotate270Y.rotateY(-90 * deg);
+        Rotate90X180Z.rotateX(90 * deg);
+        Rotate90X180Z.rotateZ(180 * deg);
+        Rotate90Y180Z.rotateY(90 * deg);
+        Rotate90Y180Z.rotateZ(180 * deg);
+        Rotate90Z.rotateZ(90 * deg);
+        Rotate270Z.rotateZ(-90 * deg);
+        Rotate270Y180X.rotateY(-90 * deg);
+        Rotate270Y180X.rotateX(180 * deg);
+        Rotate90Y180X.rotateY(90 * deg);
+        Rotate90Y180X.rotateX(180 * deg);
+    }
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

@@ -30,22 +30,27 @@
 #ifndef CosmicDetectorConstruction_h
 #define CosmicDetectorConstruction_h 1
 
-#include "TaggingSystem/forTaggingSystem.hh"
+// #include "TaggingSystem/forTaggingSystem.hh"
+
+#include <G4Cache.hh>
+
 
 #include "Constants.hh"
 #include "HadronCalorimeterSD.hh"
 #include "PlasticSD.hh"
+#include "TaggingSystem/GEMSD.hh"
 
-#include "G4VUserDetectorConstruction.hh"
-#include "globals.hh"
-#include "G4RotationMatrix.hh"
 #include "G4Colour.hh"
+#include "G4RotationMatrix.hh"
+#include "G4VUserDetectorConstruction.hh"
 #include "G4VisAttributes.hh"
+#include "globals.hh"
 
 
 class G4VPhysicalVolume;
 class G4GlobalMagFieldMessenger;
 class G4UserLimits;
+class G4GenericMessenger;
 
 #pragma once
 
@@ -53,22 +58,29 @@ namespace Cosmic
 {
 
 /// Detector construction class to define materials and geometry.
-/// The calorimeter is a box made of a given number of layers. A layer consists
-/// of an absorber plate and of a detection gap. The layer is replicated.
-///
-/// Four parameters define the geometry of the calorimeter :
-///
-/// - the thickness of an absorber plate,
-/// - the thickness of a gap,
-/// - the number of layers,
-/// - the transverse size of the calorimeter (the input face is a square).
-///
-/// In ConstructSDandField() sensitive detectors of CalorimeterSD type
-/// are created and associated with the Absorber and Gap volumes.
-/// In addition a transverse uniform magnetic field is defined
-/// via G4GlobalMagFieldMessenger class.
+    /// The calorimeter is a box made of a given number of layers. A layer consists
+    /// of an absorber plate and of a detection gap. The layer is replicated.
+    ///
+    /// Four parameters define the geometry of the calorimeter :
+    ///
+    /// - the thickness of an absorber plate,
+    /// - the thickness of a gap,
+    /// - the number of layers,
+    /// - the transverse size of the calorimeter (the input face is a square).
+    ///
+    /// In ConstructSDandField() sensitive detectors of CalorimeterSD type
+    /// are created and associated with the Absorber and Gap volumes.
+    /// In addition a transverse uniform magnetic field is defined
+    /// via G4GlobalMagFieldMessenger class.
 
-class DetectorConstruction : public G4VUserDetectorConstruction
+    class ChamberSD;
+    class HadronCalorimeterSD;
+    class PlasticSD;
+    class GEMSD;
+
+    class MainVolTaggingSystem;
+
+    class DetectorConstruction : public G4VUserDetectorConstruction
 {
   public:
     DetectorConstruction();
@@ -87,7 +99,6 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
   private:
     G4LogicalVolume *fWorldLV;
-    G4LogicalVolume *fWorldLV_rot = nullptr; // для повернутой мишени
     G4VPhysicalVolume *worldPV;
 
 
@@ -119,19 +130,21 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
     void ConstructPlasticThin2();
 
-    void ConstructTarget();
+    ///
 
-    void ConstructMagnetCell();
-
-    void ConstructMagnetD2();
-
-    void ConstructMagnetD1();
-    void ConstructMagnetD3();
-
-    void ConstructMagnetQF();
-    void ConstructMagnetQD();
-
-    void ConstructGEM();
+    // void ConstructTarget();
+    //
+    // void ConstructMagnetCell();
+    //
+    // void ConstructMagnetD2();
+    //
+    // void ConstructMagnetD1();
+    // void ConstructMagnetD3();
+    //
+    // void ConstructMagnetQF();
+    // void ConstructMagnetQD();
+    //
+    // void ConstructGEM();
 
 
     G4LogicalVolume * ConstructLOWQ(G4int nsys);
@@ -233,13 +246,13 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
         // Логические Объемы for SD
 
+        G4Cache<GEMSD *> fGEM_SD = nullptr;
+
         G4LogicalVolume *plastic_fat_nsys1LV = nullptr;
         G4LogicalVolume *plastic_fat_nsys2LV_120 = nullptr;
         G4LogicalVolume *plastic_fat_nsys2LV_125 = nullptr;
         G4LogicalVolume *plastic_thin_nsys1LV = nullptr;
         G4LogicalVolume *plastic_thin_nsys2LV = nullptr;
-
-        G4LogicalVolume *box_GEM_log = nullptr;
 
         G4LogicalVolume *scint_HadCal_nsys1LV = nullptr;
         G4LogicalVolume *scint_HadCal_nsys2LV = nullptr;
@@ -260,20 +273,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
         G4LogicalVolume *VCGas_log_nsys2LV = nullptr;
 
 
-        // для магнита D2 GEM
-
-        G4LogicalVolume *fLogicD2gap = nullptr;
-        G4LogicalVolume *fLogicD2gap_add1 = nullptr; // дополнительный объем после магнита для вываливания поля
-        G4LogicalVolume *fLogicD2gap_add2 = nullptr;
-
-        G4LogicalVolume *fLogicD1gap = nullptr;
-        G4LogicalVolume *fLogicD3gap = nullptr;
-
-        G4LogicalVolume *fLogicQFgap = nullptr;
-        G4LogicalVolume *fLogicQDgap = nullptr;
-
-        G4double x_pos_qf = 0., y_pos_qf = 0., z_pos_qf = 0.;
-        G4double x_pos_qd = 0., y_pos_qd = 0., z_pos_qd = 0.;
+        MainVolTaggingSystem *fMainVolTaggingSystem = nullptr;
 };
 
 }
