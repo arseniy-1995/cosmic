@@ -103,19 +103,24 @@ namespace Cosmic
         //  auto Air_material = G4Material::GetMaterial("G4_AIR");
         auto Air_material = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
 
-        housing_x = 1.0 * m;
-        housing_y = 1.0 * m;
-        housing_z = 3.0 * m;
+        housing_x = 0.8 * m;
+        housing_y = 0.45 * m;
+        housing_z = 3.1 * m;
 
         fHousing_box = new G4Box("housing_box", housing_x / 2., housing_y / 2., housing_z / 2.);
         fHousing_log = new G4LogicalVolume(fHousing_box, Air_material, "housing_log", 0, 0, 0);
 
         fHousing_phys = new G4PVPlacement(0, G4ThreeVector(), fHousing_log, "housing_phys", 0, false, fCheckOverlaps);
 
+        G4VisAttributes *housing_va = new G4VisAttributes(G4Colour(0.8, 0.8, 0.8));
+        fHousing_log->SetVisAttributes(housing_va);
+        fHousing_log->SetVisAttributes(G4VisAttributes::GetInvisible());
+
         // fConstructor->fHousing_log = fHousing_log;
         //  fConstructor->fHousing_phys = fHousing_phys;
 
         fWorldLV = fHousing_log;
+
 
         DefineRotationMatrices();
         VisAttributes();
@@ -149,6 +154,8 @@ namespace Cosmic
         auto fWorldRotMaterial = VacuumMaterial;
         fWorldLV_rot = new G4LogicalVolume(world_box_rot, fWorldRotMaterial, "World_rot_log", 0, 0, 0);
         fWorldLV_rot->SetVisAttributes(Gas_VisAtt);
+
+        fWorldLV_rot->SetVisAttributes(G4VisAttributes::GetInvisible());
 
         auto worldPV_rot = new G4PVPlacement(rot_for_world_target, world_rot_pos, fWorldLV_rot, "World_rot", fWorldLV,
                                              false, fCheckOverlaps);
@@ -1899,11 +1906,6 @@ namespace Cosmic
         Shield_VisAtt = new G4VisAttributes(copper_col);
         Gas_VisAtt = new G4VisAttributes(gas_col);
 
-        fWorldLV_rot->SetVisAttributes(G4VisAttributes::GetInvisible());
-
-        G4VisAttributes *housing_va = new G4VisAttributes(G4Colour(0.8, 0.8, 0.8));
-        fHousing_log->SetVisAttributes(housing_va);
-        // fHousing_log->SetVisAttributes(G4VisAttributes::GetInvisible());
     }
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
