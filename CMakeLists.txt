@@ -70,7 +70,11 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/src/EcoMug/*.h)
 
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/TaggingSystem/*.hh)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/src/TaggingSystem/*.cc)
+
+#file(GLOB headers ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/MainVolStartTimeDetector.hh)
+#file(GLOB headers ${PROJECT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector/MainVolStartTimeDetector.cc)
 #file(GLOB lib ${PROJECT_SOURCE_DIR}/lib/*.a)
+
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -179,6 +183,11 @@ add_executable(cosmic cosmic.cc ${sources} ${headers})
 target_link_libraries(cosmic PUBLIC ROOT::RIO ROOT::Net ROOT::MathCore ${ROOT_LIBRARIES} ${Geant4_LIBRARIES})
 
 include_directories(${PROJECT_SOURCE_DIR}/include/TaggingSystem)
+
+#target_include_directories(cosmic PRIVATE
+#        ${CMAKE_CURRENT_SOURCE_DIR}/../start_time_detector/src/MainVolStartTimeDetector.cc
+#        ${CMAKE_CURRENT_SOURCE_DIR}/../start_time_detector/include/MainVolStartTimeDetector.hh
+#)
 
 # FOR GENBOS
 #target_link_libraries(cosmic PUBLIC ROOT::RIO ROOT::Net ROOT::MathCore ${ROOT_LIBRARIES} ${Geant4_LIBRARIES} ${GENBOSLIBS})

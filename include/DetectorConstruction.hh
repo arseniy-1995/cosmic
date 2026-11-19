@@ -46,6 +46,7 @@
 #include "G4VisAttributes.hh"
 #include "globals.hh"
 
+#include "../../start_time_detector/include/StartTimeDetector/MainVolStartTimeDetector.hh"
 
 class G4VPhysicalVolume;
 class G4GlobalMagFieldMessenger;
@@ -54,6 +55,10 @@ class G4GenericMessenger;
 
 #pragma once
 
+namespace StartTimeDetector
+{
+    class MainVolStartTimeDetector;
+}
 namespace Cosmic
 {
 
@@ -274,6 +279,7 @@ namespace Cosmic
 
 
         MainVolTaggingSystem *fMainVolTaggingSystem = nullptr;
+        StartTimeDetector::MainVolStartTimeDetector *fMainVolStartTimeDetector = nullptr;
 };
 
 }

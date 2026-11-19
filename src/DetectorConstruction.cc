@@ -450,6 +450,28 @@ namespace Cosmic {
         // SetLogicalVolume(fHousing_log);
         fMainVolTaggingSystem->SetLogVol();
 
+        G4ThreeVector pos_main_vol_start_time_detector = G4ThreeVector(0, 0, 0);
+        G4RotationMatrix *rot_main_vol_start_time_detector = new G4RotationMatrix();
+
+#ifdef isGenElectronGEM
+
+        G4double fScintil_z = 22.0 * cm / 2;
+        G4double fScintil_y = 2.0 * cm / 2;
+
+        rot_main_vol_start_time_detector = &Rotate90Y;
+        rot_main_vol_start_time_detector->rotateZ(90. * degree);
+        rot_main_vol_start_time_detector->rotateX(180. * degree);
+        pos_main_vol_start_time_detector =
+            G4ThreeVector((X30_GEM + fScintil_z - 1.5 * cm + 0.5 * cm - 2.0 * cm + 1.2 * cm), 0,
+                          L0_GEM + D_GEM + Z1_GEM + L_GEM + 2.0 * fScintil_y + 12. * mm);
+
+#endif
+
+        // fMainVolStartTimeDetector = new StartTimeDetector::MainVolStartTimeDetector(rot_main_vol_start_time_detector,
+        // pos_main_vol_start_time_detector, fWorldLV, false, 0, this);
+        // //SetLogicalVolume(fHousing_log);
+        // fMainVolStartTimeDetector->SetLogVol();
+
         // Plastics
 
         // ТОЛСТЫЕ ПЛАСТИКИ

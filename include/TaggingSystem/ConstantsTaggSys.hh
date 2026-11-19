@@ -9,6 +9,7 @@
 #include "G4UnitsTable.hh"
 
 constexpr G4int fNof_GEM = 3;
+constexpr G4double GEM_threshold_TDC = 0.1 * keV;
 
 // геометрия системы мечания
 
