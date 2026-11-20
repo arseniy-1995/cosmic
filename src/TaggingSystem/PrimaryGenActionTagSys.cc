@@ -100,7 +100,7 @@ namespace Cosmic
             }
         }
 
-        //   kinetic_energy = Ebeam * MeV;
+        //  kinetic_energy = Ebeam * MeV;
 
         // kinetic_energy = 350.0 * MeV;
         //  kinetic_energy = 200.0 * MeV;
@@ -299,7 +299,7 @@ namespace Cosmic
         }
 
 
-        if (true or (kinetic_energy_initial != (Ebeam * MeV)))
+        if (false and (kinetic_energy_initial != (Ebeam * MeV)))
         {
             G4cerr << "initial_kinetic_energy = " << kinetic_energy_initial
                    << " final_kinetic_energy = " << kinetic_energy

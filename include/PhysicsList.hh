@@ -5,6 +5,12 @@
 #ifndef PHYSICSLIST_HH
 #define PHYSICSLIST_HH
 
+// #include "PhysicsList.hh"
+#include "PhysicsListMessenger.hh"
+
+#include <G4DecayPhysics.hh>
+#include <G4SynchrotronRadiation.hh>
+
 #include "G4VModularPhysicsList.hh"
 #include "G4VUserPhysicsList.hh"
 
@@ -15,8 +21,12 @@
 
 #include "G4VDiscreteProcess.hh"
 
+
 namespace Cosmic
 {
+
+    class PhysicsListMessenger;
+
     class MyPhysicsList : public G4VModularPhysicsList
     {
         // class MyPhysicsList: public FTFP_BERT {
@@ -32,8 +42,29 @@ namespace Cosmic
     protected:
         void SetCuts() override;
 
+        // Construct particles
         void ConstructProcess() override;
+
+        // Construct processes and register them
         void ConstructParticle() override;
+
+        inline void SetAnalyticSR(G4bool val) { fSRType = val; };
+        void SetXrayReflectionRoughness(G4double SurfaceRoughness);
+
+    private:
+        void ConstructEM();
+
+        G4bool fSRType = false;
+        G4bool fSR_on_off = false;
+
+        // PhysicsListMessenger* fMessenger;
+        PhysicsListMessenger *fMess = nullptr;
+
+        G4OpticalPhysics *fOpticalPhysics = nullptr;
+
+        G4DecayPhysics *fDecayPhysics = nullptr;
+        G4SynchrotronRadiation *fSync = nullptr;
+        // PhysicsListMessenger* fMess;
     };
 
 
@@ -59,7 +90,6 @@ namespace Cosmic
             return &aParticleChange;
         }
     };
-
 } // namespace Cosmic
 
 #endif // START_TIME_DETECTOR_PHYSICSLIST_HH
