@@ -66,6 +66,8 @@
 #include <G4FieldManager.hh>
 #include <G4HelixSimpleRunge.hh>
 #include <G4Mag_UsualEqRhs.hh>
+#include <G4OpticalParameters.hh>
+
 #include "G4DormandPrince745.hh"
 
 #include "G4Colour.hh"
@@ -75,11 +77,18 @@
 #include "G4SystemOfUnits.hh"
 
 #include <iostream>
-//#include <TString.h>
+// #include <TString.h>
+
+namespace StartTimeDetector
+{
+    class MainVolStartTimeDetector;
+}
 
 namespace Cosmic {
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+    class MainVolTaggingSystem;
+
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
     G4ThreadLocal
     G4GlobalMagFieldMessenger
@@ -145,8 +154,15 @@ namespace Cosmic {
         G4Element *elBe = new G4Element("Beryllium", "Be", 4, 9.1218 * g / mole);
         G4Element *elN = new G4Element("Nitrogen", "N", 7, 14.01 * g / mole);
         G4Element *elO = new G4Element("Oxygen", "O", 8, 16.00 * g / mole);
+        G4Element *elLu = new G4Element("Lutetium", "Lu", 71, 174.967 * g / mole); // Lutetium
+        // G4Material *elLu = nist->FindOrBuildMaterial("G4_Lu"); // Lutetium
+        G4Element *elY = new G4Element("Yttrium", "Y", 39, 88.906 * g / mole); // Yttrium
+        // G4Material *elY = nist->FindOrBuildMaterial("G4_Y"); // Yttrium
         G4Element *elNa = new G4Element("Sodium", "Na", 11, 22.99 * g / mole);
         G4Element *elCr = new G4Element("Chromium", "Cr", 24, 52.0 * g / mole);
+        G4Element *elChlorine = new G4Element("Chlorine", "Cl", 17, 35.453 * g / mole);
+        // G4Element *elChlorine = nist->FindOrBuildElement("G4_Cl"); // FindOrBuildElement
+        // G4Material *elChlorine = nist->FindOrBuildMaterial("G4_Cl"); // FindOrBuildElement
         G4Element *elFe = new G4Element("Iron", "Fe", 26, 55.85 * g / mole);
         G4Element *elNi = new G4Element("Nickel", "Ni", 28, 58.69 * g / mole);
         G4Element *elCu = new G4Element("Copper", "Cu", 29, 63.55 * g / mole);
@@ -186,13 +202,443 @@ namespace Cosmic {
         Scintil->AddElement(elH, 10);
         Scintil->AddElement(elC, 9);
 
+        /// СЦИНТИЛЛЯТОР BC-420
 
-        G4Material *Scintil_BC_422 = new G4Material("Scintillator_BC_422", density = 1.032 * g / cm3, 2);
+        Scintil_BC_420 = new G4Material("Scintillator_BC_420", density = 1.032 * g / cm3, 2);
 
-        //Scintil->AddElement(elH, 1.102);
+
+        Scintil_BC_420->AddElement(elH, 10);
+        Scintil_BC_420->AddElement(elC, 9);
+
+        /// СЦИНТИЛЛЯТОР BC-422
+
+        Scintil_BC_422 = new G4Material("Scintillator_BC_422", density = 1.032 * g / cm3, 2);
+
+        // Scintil->AddElement(elH, 1.102);
         //Scintil->AddElement(elC, 1.0);
         Scintil_BC_422->AddElement(elH, 10);
         Scintil_BC_422->AddElement(elC, 9);
+////
+
+
+        ///
+        // задание оптических свойств BC-422
+        //
+
+        std::vector<G4double> photonEnergy = {2.034 * eV, 2.75 * eV, 2.78 * eV, 2.82 * eV, 2.84 * eV,
+                                              2.88 * eV,  2.92 * eV, 2.95 * eV, 2.98 * eV, 4.136 * eV};
+        // derived from spectrum found on datasheet, used FWHM // диапозон энергий
+
+        G4double rindex_for_BC422 = 1.58;
+
+        std::vector<G4double> rindex = {rindex_for_BC422, rindex_for_BC422, rindex_for_BC422, rindex_for_BC422,
+                                        rindex_for_BC422, rindex_for_BC422, rindex_for_BC422, rindex_for_BC422,
+                                        rindex_for_BC422, rindex_for_BC422};
+
+        // std::vector<G4double> rindex = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
+
+        // показатель преломления
+
+        G4double lambda_for_BC422 = 8.0 * cm;
+
+        std::vector<G4double> absorption = {lambda_for_BC422, lambda_for_BC422, lambda_for_BC422, lambda_for_BC422,
+                                            lambda_for_BC422, lambda_for_BC422, lambda_for_BC422, lambda_for_BC422,
+                                            lambda_for_BC422, lambda_for_BC422};
+
+
+        // std::vector<G4double> absorption = {200. * cm, 200. * cm, 200. * cm, 200. * cm, 200. * cm,
+        //                                     200. * cm, 200. * cm, 200. * cm, 200. * cm, 200. * cm};
+        // длина затухания
+
+
+        std::vector<G4double> reflectivity = {0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5};
+
+        // отражения
+
+
+        // это спектр высвечивания
+        std::vector<G4double> photonEnergy_for_em_spectrum = {
+            2.704126073 * eV, 2.712489798 * eV, 2.721843714 * eV, 2.732207818 * eV, 2.742651152 * eV, 2.754135313 * eV,
+            2.762811747 * eV, 2.770570155 * eV, 2.781309389 * eV, 2.791144830 * eV, 2.802044473 * eV, 2.812027373 * eV,
+            2.822081661 * eV, 2.833224746 * eV, 2.842407481 * eV, 2.850620028 * eV, 2.859916053 * eV, 2.874497662 * eV,
+            2.885004466 * eV, 2.892405047 * eV, 2.900909482 * eV, 2.909464075 * eV, 2.918069271 * eV, 2.927811163 * eV,
+            2.938712061 * eV, 2.948592506 * eV, 2.964094839 * eV, 2.977512881 * eV, 2.992186860 * eV, 3.004716746 * eV,
+            3.015046793 * eV, 3.024288868 * eV, 3.034754163 * eV, 3.042944046 * eV, 3.052358207 * eV, 3.063019009 * eV,
+            3.074952024 * eV, 3.084565590 * eV, 3.096667412 * eV, 3.107640530 * eV, 3.121158186 * eV, 3.133549419 * eV,
+            3.143533470 * eV, 3.153581347 * eV, 3.163693662 * eV, 3.175147818 * eV, 3.185399142 * eV, 3.197011294 * eV,
+            3.210013385 * eV, 3.220491451 * eV, 3.232361342 * eV, 3.242986054 * eV, 3.253680842 * eV, 3.265797109 * eV,
+            3.278003952 * eV, 3.290302391 * eV, 3.301312067 * eV, 3.315178209 * eV, 3.327757706 * eV, 3.336197208 * eV,
+            3.344679626 * eV, 3.353205287 * eV, 3.358913250 * eV, 3.367511723 * eV, 3.377599081 * eV, 3.384841416 * eV,
+            3.393573320 * eV, 3.397956189 * eV, 3.408227042 * eV, 3.412647868 * eV, 3.421524015 * eV, 3.428956152 * eV,
+            3.436420647 * eV, 3.443917712 * eV, 3.455981295 * eV, 3.462044835 * eV, 3.468129689 * eV, 3.477297181 * eV,
+            3.483435816 * eV, 3.495778337 * eV, 3.505092778 * eV, 3.514456989 * eV, 3.527020714 * eV, 3.539674588 * eV,
+            3.554019166 * eV, 3.565256694 * eV, 3.578186917 * eV};
+
+
+        // for (auto x: photonEnergy_for_em_spectrum) {
+        //     G4cerr << (hbarc*twopi / x) / nm << G4endl;
+        // }
+        std::vector<G4double> scintilEfficiency = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
+        std::vector<G4double> scintilEfficiency_for_em_spectrum = {
+            0.000000000, 0.001602564, 0.011217949, 0.020833333, 0.036858974, 0.048076923, 0.062500000, 0.070512821,
+            0.080128205, 0.096153846, 0.110576923, 0.125000000, 0.139423077, 0.152243590, 0.165064103, 0.179487179,
+            0.200320513, 0.221153846, 0.235576923, 0.251602564, 0.262820513, 0.278846154, 0.299679487, 0.315705128,
+            0.333333333, 0.354166667, 0.376602564, 0.405448718, 0.431089744, 0.456730769, 0.472756410, 0.495192308,
+            0.511217949, 0.527243590, 0.551282051, 0.567307692, 0.586538462, 0.607371795, 0.628205128, 0.649038462,
+            0.674679487, 0.700320513, 0.719551282, 0.735576923, 0.754807692, 0.778846154, 0.801282051, 0.825320513,
+            0.844551282, 0.865384615, 0.889423077, 0.915064103, 0.940705128, 0.966346154, 0.982371795, 1.000000000,
+            1.000000000, 0.985576923, 0.963141026, 0.939102564, 0.913461538, 0.878205128, 0.838141026, 0.802884615,
+            0.766025641, 0.732371795, 0.698717949, 0.671474359, 0.642628205, 0.612179487, 0.576923077, 0.541666667,
+            0.511217949, 0.479166667, 0.442307692, 0.408653846, 0.378205128, 0.346153846, 0.314102564, 0.278846154,
+            0.230769231, 0.192307692, 0.145833333, 0.104166667, 0.064102564, 0.035256410, 0.008012821};
+
+
+        // for (auto x: scintilEfficiency_for_em_spectrum) {
+        //     G4cerr << x << G4endl;
+        // }
+
+        const G4int nEntries = sizeof(photonEnergy) /
+            sizeof(G4double); // divide by size of data type to get the size of the actual list in bytes
+
+        //  G4MaterialPropertiesTable *MPT_BC_422 = new G4MaterialPropertiesTable();
+        MPT_BC_422 = new G4MaterialPropertiesTable();
+
+        // properties that depend on energy
+        MPT_BC_422->AddProperty("RINDEX", photonEnergy, rindex);
+        MPT_BC_422->AddProperty("ABSLENGTH", photonEnergy, absorption);
+        // MPT_BC_422->AddProperty("REFLECTIVITY", photonEnergy, reflectivity);
+
+        MPT_BC_422->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy_for_em_spectrum,
+                                scintilEfficiency_for_em_spectrum, false, true); // эмиссионный спектр
+        // MPT_BC_422->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, scintilEfficiency); // эмиссионный спектр
+        // постоянный = 100%
+
+        // property independent of energy
+
+        MPT_BC_422->AddConstProperty("SCINTILLATIONYIELD", 9600. / MeV); // световыход
+        MPT_BC_422->AddConstProperty("RESOLUTIONSCALE", 1.0);
+        // The standard deviation about the mean is then
+        // the square root of the mean times a factor RESOLUTIONSCALE
+
+
+        MPT_BC_422->AddConstProperty("SCINTILLATIONRISETIME1", 350. * ps);
+
+        G4OpticalParameters::Instance()->SetScintFiniteRiseTime(true);
+        MPT_BC_422->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 1.6 * ns);
+
+
+        Scintil_BC_422->SetMaterialPropertiesTable(MPT_BC_422);
+        Scintil_BC_422->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
+
+        //////////////////////////////////////
+
+        ///
+        // задание оптических свойств BC-420
+        //
+
+        photonEnergy = {2.034 * eV, 2.75 * eV, 2.78 * eV, 2.82 * eV, 2.84 * eV,
+                        2.88 * eV,  2.92 * eV, 2.95 * eV, 2.98 * eV, 4.136 * eV};
+        // derived from spectrum found on datasheet, used FWHM // диапозон энергий
+
+        G4double rindex_for_BC420 = 1.58;
+
+        // rindex_for_BC420 = 1.0;
+
+        // rindex_for_BC420 = 5.0;
+
+        rindex = {rindex_for_BC420, rindex_for_BC420, rindex_for_BC420, rindex_for_BC420, rindex_for_BC420,
+                  rindex_for_BC420, rindex_for_BC420, rindex_for_BC420, rindex_for_BC420, rindex_for_BC420};
+
+        // std::vector<G4double> rindex = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
+
+        // показатель преломления
+
+        G4double lambda_for_BC420 = 110.0 * cm;
+
+        absorption = {lambda_for_BC420, lambda_for_BC420, lambda_for_BC420, lambda_for_BC420, lambda_for_BC420,
+                      lambda_for_BC420, lambda_for_BC420, lambda_for_BC420, lambda_for_BC420, lambda_for_BC420};
+
+
+        // длина затухания
+
+
+        reflectivity = {0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5};
+
+        // отражения
+
+        constexpr G4double optPhotMinE_ = 0.2 * eV;
+        constexpr G4double optPhotMaxE_ = 11.5 * eV;
+        constexpr G4double noAbsLength_ = 1.e8 * m;
+
+        constexpr G4double hc_ = h_Planck * c_light;
+
+        // это спектр высвечивания
+        // photonEnergy_for_em_spectrum = {
+        //     2.704126073 * eV, 2.712489798 * eV, 2.721843714 * eV, 2.732207818 * eV, 2.742651152 * eV, 2.754135313 *
+        //     eV, 2.762811747 * eV, 2.770570155 * eV, 2.781309389 * eV, 2.791144830 * eV, 2.802044473 * eV, 2.812027373
+        //     * eV, 2.822081661 * eV, 2.833224746 * eV, 2.842407481 * eV, 2.850620028 * eV, 2.859916053 *
+        //     eV, 2.874497662 * eV, 2.885004466 * eV, 2.892405047 * eV, 2.900909482 * eV, 2.909464075 * eV, 2.918069271
+        //     * eV, 2.927811163 * eV, 2.938712061 * eV, 2.948592506 * eV, 2.964094839 * eV, 2.977512881 *
+        //     eV, 2.992186860 * eV, 3.004716746 * eV, 3.015046793 * eV, 3.024288868 * eV, 3.034754163 * eV, 3.042944046
+        //     * eV, 3.052358207 * eV, 3.063019009 * eV, 3.074952024 * eV, 3.084565590 * eV, 3.096667412 *
+        //     eV, 3.107640530 * eV, 3.121158186 * eV, 3.133549419 * eV, 3.143533470 * eV, 3.153581347 * eV, 3.163693662
+        //     * eV, 3.175147818 * eV, 3.185399142 * eV, 3.197011294 * eV, 3.210013385 * eV, 3.220491451 *
+        //     eV, 3.232361342 * eV, 3.242986054 * eV, 3.253680842 * eV, 3.265797109 * eV, 3.278003952 * eV, 3.290302391
+        //     * eV, 3.301312067 * eV, 3.315178209 * eV, 3.327757706 * eV, 3.336197208 * eV, 3.344679626 *
+        //     eV, 3.353205287 * eV, 3.358913250 * eV, 3.367511723 * eV, 3.377599081 * eV, 3.384841416 * eV, 3.393573320
+        //     * eV, 3.397956189 * eV, 3.408227042 * eV, 3.412647868 * eV, 3.421524015 * eV, 3.428956152 * eV,
+        //     3.436420647 * eV, 3.443917712 * eV, 3.455981295 * eV, 3.462044835 * eV, 3.468129689 * eV, 3.477297181 *
+        //     eV, 3.483435816 * eV, 3.495778337 * eV, 3.505092778 * eV, 3.514456989 * eV, 3.527020714 * eV, 3.539674588
+        //     * eV, 3.554019166 * eV, 3.565256694 * eV, 3.578186917 * eV
+        // };
+
+        photonEnergy_for_em_spectrum = {optPhotMinE_,      hc_ / (520. * nm), hc_ / (510. * nm), hc_ / (500. * nm),
+                                        hc_ / (490. * nm), hc_ / (480. * nm), hc_ / (470. * nm), hc_ / (460. * nm),
+                                        hc_ / (450. * nm), hc_ / (440. * nm), hc_ / (430. * nm), hc_ / (420. * nm),
+                                        hc_ / (410. * nm), hc_ / (400. * nm), hc_ / (390. * nm), hc_ / (380. * nm),
+                                        hc_ / (370. * nm), hc_ / (360. * nm), hc_ / (350. * nm), hc_ / (340. * nm),
+                                        optPhotMaxE_};
+
+
+        // for (auto x: photonEnergy_for_em_spectrum) {
+        //     G4cerr << (hbarc*twopi / x) / nm << G4endl;
+        // }
+        scintilEfficiency = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
+
+        // scintilEfficiency_for_em_spectrum = {
+        //     0.000000000, 0.001602564, 0.011217949, 0.020833333, 0.036858974, 0.048076923, 0.062500000, 0.070512821,
+        //     0.080128205, 0.096153846, 0.110576923, 0.125000000, 0.139423077, 0.152243590, 0.165064103, 0.179487179,
+        //     0.200320513, 0.221153846, 0.235576923, 0.251602564, 0.262820513, 0.278846154, 0.299679487, 0.315705128,
+        //     0.333333333, 0.354166667, 0.376602564, 0.405448718, 0.431089744, 0.456730769, 0.472756410, 0.495192308,
+        //     0.511217949, 0.527243590, 0.551282051, 0.567307692, 0.586538462, 0.607371795, 0.628205128, 0.649038462,
+        //     0.674679487, 0.700320513, 0.719551282, 0.735576923, 0.754807692, 0.778846154, 0.801282051, 0.825320513,
+        //     0.844551282, 0.865384615, 0.889423077, 0.915064103, 0.940705128, 0.966346154, 0.982371795, 1.000000000,
+        //     1.000000000, 0.985576923, 0.963141026, 0.939102564, 0.913461538, 0.878205128, 0.838141026, 0.802884615,
+        //     0.766025641, 0.732371795, 0.698717949, 0.671474359, 0.642628205, 0.612179487, 0.576923077, 0.541666667,
+        //     0.511217949, 0.479166667, 0.442307692, 0.408653846, 0.378205128, 0.346153846, 0.314102564, 0.278846154,
+        //     0.230769231, 0.192307692, 0.145833333, 0.104166667, 0.064102564, 0.035256410, 0.008012821
+        // };
+
+        scintilEfficiency_for_em_spectrum = {0. / 100,  0. / 100,  0. / 100,  1. / 100,  2. / 100,  2.5 / 100,
+                                             3.5 / 100, 5. / 100,  8. / 100,  13. / 100, 20. / 100, 32. / 100,
+                                             50. / 100, 68. / 100, 90. / 100, 94. / 100, 50. / 100, 10. / 100,
+                                             1. / 100,  0. / 100,  0. / 100};
+
+        // for (auto x: scintilEfficiency_for_em_spectrum) {
+        //     G4cerr << x << G4endl;
+        // }
+
+
+        MPT_BC_420 = new G4MaterialPropertiesTable();
+
+        // properties that depend on energy
+        MPT_BC_420->AddProperty("RINDEX", photonEnergy, rindex);
+        MPT_BC_420->AddProperty("ABSLENGTH", photonEnergy, absorption);
+        // MPT_BC_420->AddProperty("REFLECTIVITY", photonEnergy, reflectivity);
+
+        MPT_BC_420->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy_for_em_spectrum,
+                                scintilEfficiency_for_em_spectrum, false, true); // эмиссионный спектр
+        // MPT_BC_420->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, scintilEfficiency); // эмиссионный спектр
+        // постоянный = 100%
+
+        // property independent of energy
+
+        MPT_BC_420->AddConstProperty("SCINTILLATIONYIELD", 12000. / MeV); // световыход
+        MPT_BC_420->AddConstProperty("RESOLUTIONSCALE", 1.0);
+        // The standard deviation about the mean is then
+        // the square root of the mean times a factor RESOLUTIONSCALE
+
+
+        MPT_BC_420->AddConstProperty("SCINTILLATIONRISETIME1", 500. * ps);
+
+        G4OpticalParameters::Instance()->SetScintFiniteRiseTime(true);
+        MPT_BC_420->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 1.5 * ns);
+
+
+        Scintil_BC_420->SetMaterialPropertiesTable(MPT_BC_420);
+        Scintil_BC_420->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
+
+        ////
+
+        // Glass
+        Glass = new G4Material("Glass", density = 1.032 * g / cm3, 2);
+        Glass->AddElement(elC, 91.533 * perCent);
+        Glass->AddElement(elH, 8.467 * perCent);
+
+        std::vector<G4double> glass_Energy = {7.0 * eV, 7.07 * eV, 7.14 * eV};
+        std::vector<G4double> glass_AbsLength = {420. * cm, 420. * cm, 420. * cm};
+        auto glass_mt = new G4MaterialPropertiesTable();
+        glass_mt->AddProperty("ABSLENGTH", glass_Energy, glass_AbsLength);
+        glass_mt->AddProperty("RINDEX", "Fused Silica");
+        Glass->SetMaterialPropertiesTable(glass_mt);
+
+        ///
+
+        ///
+        // СВЕТОВОД из оргстекла
+
+        LightGuide_material = nistManager->FindOrBuildMaterial("G4_PLEXIGLASS");
+        LightGuide_material->SetName("LightGuide");
+
+        G4MaterialPropertiesTable *LightGuide_material_MT = new G4MaterialPropertiesTable();
+        std::vector<G4double> RangeGuide = {2.00 * eV, 4.0 * eV};
+        std::vector<G4double> RefractiveGuide = {1.492, 1.502};
+        std::vector<G4double> Transmittance = {1.0, 1.0};
+        // G4double lambda_light_guide = 500. * cm; // 5 метров
+        G4double lambda_light_guide = 20. * m; // 20 метров
+        std::vector<G4double> AbsLengthGuide = {lambda_light_guide, lambda_light_guide};
+        LightGuide_material_MT->AddConstProperty("SCINTILLATIONYIELD", 0. / MeV); // световыхода у световода нету
+        LightGuide_material_MT->AddProperty("RINDEX", RangeGuide, RefractiveGuide);
+        LightGuide_material_MT->AddProperty("ABSLENGTH", RangeGuide, AbsLengthGuide);
+        // LightGuide_material_MT->AddConstProperty("ABSLENGTH", 500. * cm);
+        LightGuide_material_MT->AddProperty("TRANSMITTANCE", RangeGuide, Transmittance);
+
+        LightGuide_material->SetMaterialPropertiesTable(LightGuide_material_MT);
+
+        // ОПТИЧЕСКИЙ КЛЕЙ optical glue RTV3145 Meltmount1704
+
+        auto OpticalGlue_material = new G4Material("OpticalGlue", 1.25 * g / cm3, 4);
+        OpticalGlue_material->AddElement(elC, 21);
+        OpticalGlue_material->AddElement(elH, 25);
+        OpticalGlue_material->AddElement(elChlorine, 1);
+        // OpticalGlue_material->AddMaterial(elChlorine, 1./(21+25+1+5));
+        OpticalGlue_material->AddElement(elO, 5);
+
+        G4MaterialPropertiesTable *OpticalGlue_material_MPT = new G4MaterialPropertiesTable();
+        std::vector<G4double> ene_glue = {2.5 * eV, 3.5 * eV};
+        // std::vector<G4double> rGlue = {1.704, 1.704};
+        //   std::vector<G4double> rGlue = {1.416, 1.416};
+        std::vector<G4double> rGlue = {1.49, 1.49};
+        std::vector<G4double> abslenGlue = {1.44 * cm, 1.44 * cm};
+
+        OpticalGlue_material_MPT->AddProperty("RINDEX", ene_glue, rGlue);
+        OpticalGlue_material_MPT->AddProperty("ABSLENGTH", ene_glue, abslenGlue);
+        OpticalGlue_material->SetMaterialPropertiesTable(OpticalGlue_material_MPT);
+
+        // ОПТИЧЕСКАЯ СМАЗКА optical grase GEL
+
+
+        // SiO2
+        auto fSiliconDioxide = nistManager->FindOrBuildMaterial("G4_SILICON_DIOXIDE");
+        // Lu2O3
+        auto fLutetiumOxide = new G4Material("LutetiumOxide", 9.41 * g / cm3, 2);
+        fLutetiumOxide->AddElement(elLu, 2);
+        fLutetiumOxide->AddElement(elO, 3);
+        // Y2O3
+        auto fYttriumOxide = new G4Material("YttriumOxide", 5.01 * g / cm3, 2);
+        fYttriumOxide->AddElement(elY, 2);
+        fYttriumOxide->AddElement(elO, 3);
+
+        // OpticalGrease_material = new G4Material("OpticalGrease", 7.1 * g / cm3, 3);
+        // OpticalGrease_material->AddMaterial(fLutetiumOxide, 81 * perCent);
+        // OpticalGrease_material->AddMaterial(fSiliconDioxide, 14 * perCent);
+        // OpticalGrease_material->AddMaterial(fYttriumOxide, 5 * perCent);
+
+        /////
+
+        // BC-630 Silicone Optical Grease
+
+        // TiO
+        // auto fTitaniumOxide = new G4Material("TitaniumDiOxide", 9.41 * g / cm3, 2);
+        // fLutetiumOxide->AddElement(elTi, 1);
+        // fLutetiumOxide->AddElement(elO, 2);
+
+        // auto fTitaniumDiOxide = nist->FindOrBuildMaterial("G4_TITANIUM_DIOXIDE");
+
+        OpticalGrease_material = new G4Material("OpticalGrease", 1.06 * g / cm3, 3);
+
+        OpticalGrease_material->AddElement(elH, 20);
+        OpticalGrease_material->AddElement(elC, 18);
+        OpticalGrease_material->AddElement(elO, 3);
+
+
+        G4MaterialPropertiesTable *OpticalGrease_material_MPT = new G4MaterialPropertiesTable();
+
+        // Optical Properties of Materials ( nm/1242.38 )
+        // const G4int num = 120;
+        // std::vector<G4double> ene_grease = {
+        //     3.51370304301 * eV, 3.46284728249 * eV, 3.4156577087 * eV, 3.36977603198 * eV, 3.23635193804 * eV,
+        //     3.22094763375 * eV, 3.20764136152 * eV, 3.19637713232 * eV, 3.18291759837 * eV, 3.17218298275 * eV,
+        //     3.16123184911 * eV, 3.1503731311 * eV, 3.1396057038 * eV, 3.12928927829 * eV, 3.12192642432 * eV,
+        //     3.11495009612 * eV, 3.10797996538 * eV, 3.10108780463 * eV, 3.09434823581 * eV, 3.0876570207 * eV,
+        //     3.08100556180 * eV, 3.07438540703 * eV, 3.06780442816 * eV, 3.06124350731 * eV, 3.05469721997 * eV,
+        //     3.04817354563 * eV, 3.04165911826 * eV, 3.03518039566 * eV, 3.02874761411 * eV, 3.02234465979 * eV,
+        //     3.01597393385 * eV, 3.00960145787 * eV, 3.00323000843 * eV, 2.99723759298 * eV, 2.99057154424 * eV,
+        //     2.98421142700 * eV, 2.97752386539 * eV, 2.9682041556 * eV, 2.95859140503 * eV, 2.950636529720 * eV,
+        //     2.93947102052 * eV, 2.92513342795 * eV, 2.89963655932 * eV, 2.87253927733 * eV, 2.85352309132 * eV,
+        //     2.83628914618 * eV, 2.8222957219 * eV, 2.80993218523 * eV, 2.79766640437 * eV, 2.78549390188 * eV,
+        //     2.77344008928 * eV, 2.76149998282 * eV, 2.74965574426 * eV, 2.73791911725 * eV, 2.72625989445 * eV,
+        //     2.71468687979 * eV, 2.70321484598 * eV, 2.62319693516 * eV, 2.61249533729 * eV, 2.60188652089 * eV,
+        //     2.59136351654 * eV, 2.58094246644 * eV, 2.5706077365 * eV, 2.56035262437 * eV, 2.55018739616 * eV,
+        //     2.53884632056 * eV, 2.46805717364 * eV, 2.45631868318 * eV, 2.44469337969 * eV, 2.43204791693 * eV,
+        //     2.41841286976 * eV, 2.40494311619 * eV, 2.38943563283 * eV, 2.37197339274 * eV, 2.35478359973 * eV,
+        //     2.33681395534 * eV, 2.31707351876 * eV, 2.30377129545 * eV, 2.25609178885 * eV, 2.23488272047 * eV,
+        //     2.21410318259 * eV, 2.19371928099 * eV, 2.17372057346 * eV, 2.15408900424 * eV, 2.13481455788 * eV,
+        //     2.11588408116 * eV, 2.09729119825 * eV, 2.07902560898 * eV, 2.0610754277 * eV, 2.04343516532 * eV,
+        //     2.02609686477 * eV, 2.00905157727 * eV, 1.99229317822 * eV, 1.97581265517 * eV, 1.95960675492 * eV,
+        //     1.94367103348 * eV, 1.92800809024 * eV, 1.91260128415 * eV, 1.89744776279 * eV, 1.88252859884 * eV,
+        //     1.86783894415 * eV, 1.85337461802 * eV, 1.83912783245 * eV, 1.82509840454 * eV, 1.81128037215 * eV,
+        //     1.7976639421 * eV, 1.78425469025 * eV, 1.77643183324 * eV, 2.64723791997 * eV, 2.65431419592 * eV,
+        //     2.66836164719 * eV, 2.6790662172 * eV, 2.68631390810 * eV, 2.69716329233 * eV, 2.53364876322 * eV,
+        //     2.5209805194 * eV, 2.51147200842 * eV, 2.49905148118 * eV, 2.48976188644 * eV, 2.48661723357 * eV
+        // };
+        std::vector<G4double> ene_grease = {1.0 * eV, 4.0 * eV};
+        // std::reverse( ene_grease.begin(), ene_grease.end() );
+        // ene_grease.assign( ene_grease.rbegin(), ene_grease.rend() );
+        // std::vector<G4double> ene_grease_copy;
+        // std::reverse_copy(ene_grease.begin(), ene_grease.end(), ene_grease_copy);
+        // ene_grease_copy.assign( ene_grease.rbegin(), ene_grease.rend() );
+
+        // std::vector<G4double> rGel = {
+        //     1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82,
+        //     1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82,
+        //     1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82,
+        //     1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82,
+        //     1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82,
+        //     1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82,
+        //     1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82
+        // };
+        // std::vector<G4double> rGel = {
+        //     1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55,
+        //     1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55,
+        //     1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55,
+        //     1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55,
+        //     1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55,
+        //     1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55,
+        //     1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55, 1.55
+        // };
+        // std::vector<G4double> rGel = {1.55, 1.55};
+        std::vector<G4double> rGel = {1.465, 1.465}; // конкретно для Bicron BC-630
+
+
+        std::vector<G4double> ene_grease_for_transmission = {
+            1.2398e3 / 500. * eV, 1.2398e3 / 475. * eV, 1.2398e3 / 450. * eV, 1.2398e3 / 425. * eV,
+            1.2398e3 / 400. * eV, 1.2398e3 / 375. * eV, 1.2398e3 / 350. * eV, 1.2398e3 / 325. * eV,
+            1.2398e3 / 300. * eV, 1.2398e3 / 280. * eV, 1.2398e3 / 275. * eV, 1.2398e3 / 270. * eV,
+            1.2398e3 / 250. * eV, 1.2398e3 / 200. * eV};
+        std::vector<G4double> transmissionGel = {0.999, 0.99, 0.99, 0.98, 0.97, 0.97,  0.96,
+                                                 0.95,  0.9,  0.9,  0.6,  0.2,  0.001, 0.0001};
+
+        std::vector<G4double> abslenghtGel;
+        // int i =0;
+        for (auto v : transmissionGel)
+        {
+
+            abslenghtGel.push_back(-0.125 * mm * 100 / log(v));
+
+            // G4cout << abslenghtGel.at(i) <<" !!!" << G4endl;
+            // i++;
+        }
+        // конкретно для Bicron BC-630
+
+        OpticalGrease_material_MPT->AddProperty("RINDEX", ene_grease, rGel);
+        OpticalGrease_material_MPT->AddProperty("TRANSMITTANCE", ene_grease_for_transmission, transmissionGel, false,
+                                                true);
+        //  OpticalGrease_material_MPT->AddProperty("ABSLENGTH", ene_grease_for_transmission,  abslenghtGel);
+        OpticalGrease_material->SetMaterialPropertiesTable(OpticalGrease_material_MPT);
+
+
+        /////
 
         //  G4Material* Air  = man->FindOrBuildMaterial("G4_AIR");
 
@@ -291,6 +737,66 @@ namespace Cosmic {
         // Kapton->AddElement(elH, 10);
         // Kapton->AddElement(elO, 5);
         // Kapton->AddElement(elN, 2);
+
+        ////
+
+        // отражающая обертка Аллюминизированный МАЙЛАР (ЛАВСАН)
+        //(5*(Mylar->GetDensity())+2*(Alumin->GetDensity())/7);
+        AlMylar = new G4Material("AlMylar", density = (5 * (Mylar->GetDensity()) + 1 * (Alumin->GetDensity()) / 7), 2);
+        AlMylar->AddMaterial(Mylar, 5. / 6.);
+        AlMylar->AddMaterial(Alumin, 1. / 6.);
+
+        std::vector<G4double> MylarRefractionIndex = {1.576, 1.576, 1.576, 1.576, 1.576,
+                                                      1.576, 1.576, 1.576, 1.576, 1.576};
+
+        std::vector<G4double> MylarAbsorptionLength = {94 * cm, 94 * cm, 94 * cm, 94 * cm, 94 * cm,
+                                                       94 * cm, 94 * cm, 94 * cm, 94 * cm, 94 * cm};
+
+
+        std::vector<G4double> MylarReflectivity = {0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9};
+        std::vector<G4double> MylarEfficiency = {0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1};
+
+
+        G4MaterialPropertiesTable *MylarMPT = new G4MaterialPropertiesTable();
+
+        MylarMPT->AddProperty("RINDEX", photonEnergy, MylarRefractionIndex);
+        MylarMPT->AddProperty("ABSLENGTH", photonEnergy, MylarAbsorptionLength);
+        MylarMPT->AddProperty("REFLECTIVITY", photonEnergy, MylarReflectivity);
+        MylarMPT->AddProperty("EFFICIENCY", photonEnergy, MylarEfficiency);
+
+        AlMylar->SetMaterialPropertiesTable(MylarMPT);
+
+        //////////
+
+        // черная бумага
+
+        // BlackPaper = new G4Material("BlackPaper", density = (5*(Mylar->GetDensity())+1*(Alumin->GetDensity())/7), 2);
+        BlackPaper = nistManager->FindOrBuildMaterial("G4_CELLULOSE_CELLOPHANE");
+        BlackPaper->SetName("BlackPaper");
+        //  auto WoodMaterial = G4Material::GetMaterial("G4_CELLULOSE_CELLOPHANE");
+        //  BlackPaper->AddMaterial(Mylar, 5./6.);
+        //  BlackPaper->AddMaterial(Alumin, 1./6.);
+
+        std::vector<G4double> BlackPaperRefractionIndex = {1.576, 1.576, 1.576, 1.576, 1.576,
+                                                           1.576, 1.576, 1.576, 1.576, 1.576};
+
+        std::vector<G4double> BlackPaperAbsorptionLength = {0.1 * cm, 0.1 * cm, 0.1 * cm, 0.1 * cm, 0.1 * cm,
+                                                            0.1 * cm, 0.1 * cm, 0.1 * cm, 0.1 * cm, 0.1 * cm};
+
+
+        std::vector<G4double> BlackPaperReflectivity = {0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05};
+        std::vector<G4double> BlackPaperEfficiency = {0.95, 0.95, 0.95, 0.95, 0.95, 0.95, 0.95, 0.95, 0.95, 0.95};
+
+
+        G4MaterialPropertiesTable *BlackPaperMPT = new G4MaterialPropertiesTable();
+
+        BlackPaperMPT->AddProperty("RINDEX", photonEnergy, BlackPaperRefractionIndex);
+        BlackPaperMPT->AddProperty("ABSLENGTH", photonEnergy, BlackPaperAbsorptionLength);
+        BlackPaperMPT->AddProperty("REFLECTIVITY", photonEnergy, BlackPaperReflectivity);
+        BlackPaperMPT->AddProperty("EFFICIENCY", photonEnergy, BlackPaperEfficiency);
+
+        BlackPaper->SetMaterialPropertiesTable(BlackPaperMPT);
+
 
         // Print materials
         G4cout << *(G4Material::GetMaterialTable()) << G4endl;
@@ -457,20 +963,24 @@ namespace Cosmic {
 
         G4double fScintil_z = 22.0 * cm / 2;
         G4double fScintil_y = 2.0 * cm / 2;
+        G4double fScintil_x = 4.0 * cm / 2;
 
         rot_main_vol_start_time_detector = &Rotate90Y;
         rot_main_vol_start_time_detector->rotateZ(90. * degree);
         rot_main_vol_start_time_detector->rotateX(180. * degree);
+
         pos_main_vol_start_time_detector =
             G4ThreeVector((X30_GEM + fScintil_z - 1.5 * cm + 0.5 * cm - 2.0 * cm + 1.2 * cm), 0,
                           L0_GEM + D_GEM + Z1_GEM + L_GEM + 2.0 * fScintil_y + 12. * mm);
 
 #endif
 
-        // fMainVolStartTimeDetector = new StartTimeDetector::MainVolStartTimeDetector(rot_main_vol_start_time_detector,
-        // pos_main_vol_start_time_detector, fWorldLV, false, 0, this);
+        // auto DetConstrStartTimeDet = new StartTimeDetector::DetectorConstruction();
+        fMainVolStartTimeDetector = new StartTimeDetector::MainVolStartTimeDetector(
+            rot_main_vol_start_time_detector, pos_main_vol_start_time_detector, fWorldLV, false, 0, nullptr, fScintil_x,
+            fScintil_y, fScintil_z);
         // //SetLogicalVolume(fHousing_log);
-        // fMainVolStartTimeDetector->SetLogVol();
+        fMainVolStartTimeDetector->SetLogVol();
 
         // Plastics
 

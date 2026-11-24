@@ -35,6 +35,47 @@
 #include "G4PhysicalConstants.hh"
 
 // #include <iostream>
+#define isGenElectronGEM
+
+namespace StartTimeDetector
+{
+
+
+    // #define isFEU187 // ФЭУ 187 диаметр 20 мм + световод c двух/одной стороны
+    // #define isFEU187_quadro // ФЭУ 4 шт, по 2 на каждую сторону, сцинтиллятор шириной 40 мм
+#define isFEU187_mirror // ФЭУ 187 диаметр 20 мм + световод c одной стороны + зеркало
+    // #define isFEU187_two_mirror // дваФЭУ 187 диаметр 20 мм + световод c одной стороны + зеркало
+    // #define isFEU187_black_mirror // вместо зеркала черное зеркало
+    // #define isFEU187_two_black_mirror // вместо зеркала черное зеркало
+    // #define isFEU187_all_black_mirror // вместо зеркала черное зеркало со всех сторон
+    // #define isFEU187_two_all_black_mirror // вместо зеркала черное зеркало со всех сторон
+    // #define isFEU187_three_svetovod // ФЭУ 187 диаметр 20 мм + три световода с двух стороны изогнутой формы обход
+    // камеры #define isFEU187_quadro_svetovod // ФЭУ 187 диаметр 20 мм + четыре световода с двух стороны, изогнутой
+    // формы c одной стороны обход камеры
+
+#define isFEU_PMT // режим фотокатода диаметром 18 мм
+
+#if defined(isFEU187_quadro) or defined(isFEU187_quadro_svetovod)
+#define isFEU187
+#endif
+
+#if defined(isFEU187_black_mirror) || defined(isFEU187_two_black_mirror) || defined(isFEU187_all_black_mirror) ||      \
+    defined(isFEU187_two_all_black_mirror)
+#define isFEU187_mirror
+#endif
+
+#if defined(isFEU187_three_svetovod) || defined(isFEU187_mirror) || defined(isFEU187_two_mirror)
+#define isFEU187
+#endif
+
+
+    constexpr auto Scintil_x_const = 40.0 * mm / 2.;
+    constexpr G4double Scintil_y_const = 20.0 * mm / 2.;
+    constexpr G4double Scintil_z_const = 22.0 * cm / 2.;
+
+
+} // namespace StartTimeDetector
+
 
 namespace Cosmic {
 

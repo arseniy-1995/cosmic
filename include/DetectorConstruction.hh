@@ -47,6 +47,7 @@
 #include "globals.hh"
 
 #include "../../start_time_detector/include/StartTimeDetector/MainVolStartTimeDetector.hh"
+//#include "../../start_time_detector/include/Constants.hh"
 
 class G4VPhysicalVolume;
 class G4GlobalMagFieldMessenger;
@@ -57,6 +58,7 @@ class G4GenericMessenger;
 
 namespace StartTimeDetector
 {
+
     class MainVolStartTimeDetector;
 }
 namespace Cosmic
