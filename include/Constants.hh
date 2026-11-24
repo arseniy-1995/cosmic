@@ -69,7 +69,7 @@ namespace StartTimeDetector
 #endif
 
 
-    constexpr auto Scintil_x_const = 40.0 * mm / 2.;
+    constexpr G4double Scintil_x_const = 40.0 * mm / 2.;
     constexpr G4double Scintil_y_const = 20.0 * mm / 2.;
     constexpr G4double Scintil_z_const = 22.0 * cm / 2.;
 

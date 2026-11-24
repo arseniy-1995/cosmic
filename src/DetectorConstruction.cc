@@ -2407,7 +2407,7 @@ namespace Cosmic {
         new G4PVReplica("BarsH", stripH_log, layerH_log, kXAxis, N_UNITS, StripSizeX);
 
         // outer (iron-less) half-layer // первый слой
-        ubox = new G4Box("StripO", StripSizeX / 2., StripSizeY / 2., StripSizeZ / 2.);
+        ubox = new G4Box("StripO_box", StripSizeX / 2., StripSizeY / 2., StripSizeZ / 2.);
         G4LogicalVolume *stripO_log = new G4LogicalVolume(ubox, AirMaterial, "StripO", 0, 0, 0);
         stripO_log->SetVisAttributes(G4VisAttributes::GetInvisible());
         //stripO_log->SetVisAttributes(new G4VisAttributes(G4Color(1.0, 0.0, 0.0)));
@@ -2415,20 +2415,23 @@ namespace Cosmic {
         y_pos = -StripSizeY / 2.;
         y_pos += ScintThickness / 2.;
         x_pos = (ScintSizeX + GapX) / 2.;
-        vol_phys = new G4PVPlacement(0, G4ThreeVector(-x_pos, y_pos, 0.), scint_HadCalLV, "BarS", stripO_log, false, 0,
-                                     fCheckOverlaps);
-        vol_phys = new G4PVPlacement(0, G4ThreeVector(x_pos, y_pos, 0.), scint_HadCalLV, "BarS", stripO_log, false,
-                                     N_UNITS, fCheckOverlaps);
+        vol_phys = new G4PVPlacement(&RotateNull, G4ThreeVector(-x_pos, y_pos, 0.), scint_HadCalLV, "BarS", stripO_log,
+                                     false, 0, fCheckOverlaps);
+        vol_phys = new G4PVPlacement(&RotateNull, G4ThreeVector(x_pos, y_pos, 0.), scint_HadCalLV, "BarS", stripO_log,
+                                     false, N_UNITS, fCheckOverlaps);
         y_pos += ScintThickness / 2.;
         y_pos += IronThickness / 2.;
         // NO IRON HERE !!
         //  vol_phys = new G4PVPlacement(0, G4ThreeVector(0.,y_pos,0),absor_vol, "BarI", stripH_log, false, 0);
 
-        ubox = new G4Box("LayerO", LayerSizeX / 2., LayerSizeY / 2., LayerSizeZ / 2.);
+        ubox = new G4Box("LayerO_box", LayerSizeX / 2., LayerSizeY / 2., LayerSizeZ / 2.);
         G4LogicalVolume *layerO_log = new G4LogicalVolume(ubox, AirMaterial, "LayerO", 0, 0, 0);
         layerO_log->SetVisAttributes(G4VisAttributes::GetInvisible());
+        // stripO_log->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-        new G4PVReplica("BarsO", stripO_log, layerO_log, kXAxis, N_UNITS, StripSizeX);
+        auto phys_strip0_layer0 = new G4PVReplica("BarsO", stripO_log, layerO_log, kXAxis, N_UNITS, StripSizeX);
+        // delete  phys_strip0_layer0;
+        // phys_strip0_layer0->SetRotation(&Rotate45X);
 
         ///
         G4int nx = HCX_IND, nz = HCZ_IND;
