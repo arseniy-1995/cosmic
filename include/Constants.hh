@@ -69,9 +69,9 @@ namespace StartTimeDetector
 #endif
 
 
-    constexpr G4double Scintil_x_const = 40.0 * mm / 2.;
-    constexpr G4double Scintil_y_const = 20.0 * mm / 2.;
-    constexpr G4double Scintil_z_const = 22.0 * cm / 2.;
+    constexpr G4double ScintilStartTimeDetector_x_const = 40.0 * mm / 2.;
+    constexpr G4double ScintilStartTimeDetector_y_const = 20.0 * mm / 2.;
+    constexpr G4double ScintilStartTimeDetector_z_const = 22.0 * cm / 2.;
 
 
 } // namespace StartTimeDetector
@@ -175,11 +175,11 @@ namespace Cosmic {
 #define HCZ_IND (HCX_IND + N_HCX) /* Z bars */
 #define N_HCZ NZ_BARS *N_LAYERS
 
-#define N_AC    1
+#define N_AC 1
 #define TOF_IND (AC_IND+N_AC)        /* MRPC */
-#define N_TOF    1
+#define N_TOF 1
 
-//#define VC_IND (HCZ_IND + N_HCZ)    /* Vertex Ch */
+    // #define VC_IND (HCZ_IND + N_HCZ)    /* Vertex Ch */
 //#define WC1_IND (VC_IND + NVC_WRS)  /* Drift Chambers */
 //#define WC2_IND (WC1_IND + NW1_WRS) /* Drift Chambers */
 //#define WC3_IND (WC2_IND + NW2_WRS) /* Drift Chambers */

@@ -27,6 +27,7 @@
 /// \file DetectorConstruction.cc
 /// \brief Implementation of the Cosmic::DetectorConstruction class
 
+#include "../../start_time_detector/include/StartTimeDetector/MainVolStartTimeDetector.hh"
 #include "TaggingSystem/ConstantsTaggSys.hh"
 #include "TaggingSystem/DetConstrTagSys.hh"
 
@@ -961,25 +962,25 @@ namespace Cosmic {
 
 #ifdef isGenElectronGEM
 
-        G4double fScintil_z = 22.0 * cm / 2;
-        G4double fScintil_y = 2.0 * cm / 2;
-        G4double fScintil_x = 4.0 * cm / 2;
+        G4double fScintilStartTimeDetector_z = 22.0 * cm / 2;
+        G4double fScintilStartTimeDetector_y = 2.0 * cm / 2;
+        G4double fScintilStartTimeDetector_x = 4.0 * cm / 2;
 
-        rot_main_vol_start_time_detector = &Rotate90Y;
+        rot_main_vol_start_time_detector = new G4RotationMatrix(Rotate90Y);
         rot_main_vol_start_time_detector->rotateZ(90. * degree);
         rot_main_vol_start_time_detector->rotateX(180. * degree);
 
         pos_main_vol_start_time_detector =
-            G4ThreeVector((X30_GEM + fScintil_z - 1.5 * cm + 0.5 * cm - 2.0 * cm + 1.2 * cm), 0,
-                          L0_GEM + D_GEM + Z1_GEM + L_GEM + 2.0 * fScintil_y + 12. * mm);
+            G4ThreeVector((X30_GEM + fScintilStartTimeDetector_z - 1.5 * cm + 0.5 * cm - 2.0 * cm + 1.2 * cm), 0,
+                          L0_GEM + D_GEM + Z1_GEM + L_GEM + 2.0 * fScintilStartTimeDetector_y + 12. * mm);
 
 #endif
 
         // auto DetConstrStartTimeDet = new StartTimeDetector::DetectorConstruction();
         fMainVolStartTimeDetector = new StartTimeDetector::MainVolStartTimeDetector(
-            rot_main_vol_start_time_detector, pos_main_vol_start_time_detector, fWorldLV, false, 0, nullptr, fScintil_x,
-            fScintil_y, fScintil_z);
-        // //SetLogicalVolume(fHousing_log);
+            rot_main_vol_start_time_detector, pos_main_vol_start_time_detector, fWorldLV, false, 0, nullptr,
+            fScintilStartTimeDetector_x, fScintilStartTimeDetector_y, fScintilStartTimeDetector_z);
+        // SetLogicalVolume(fHousing_log);
         fMainVolStartTimeDetector->SetLogVol();
 
         // Plastics
