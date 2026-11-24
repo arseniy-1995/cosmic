@@ -27,6 +27,8 @@
 /// \file DetectorConstruction.cc
 /// \brief Implementation of the Cosmic::DetectorConstruction class
 
+#include "Constants.hh"
+
 #include "../../start_time_detector/include/StartTimeDetector/MainVolStartTimeDetector.hh"
 #include "TaggingSystem/ConstantsTaggSys.hh"
 #include "TaggingSystem/DetConstrTagSys.hh"
