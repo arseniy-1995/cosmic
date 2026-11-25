@@ -101,8 +101,7 @@ namespace
 // namespace StartTimeDetector
 namespace Cosmic
 {
-    StartTimeDetector::ScintHitsCollection *Cosmic::EventAction::GetHitsCollection_Scint(G4int hcID,
-                                                                                         const G4Event *event) const
+    StartTimeDetector::ScintHitsCollection *EventAction::GetHitsCollection_Scint(G4int hcID, const G4Event *event) const
     {
         auto hitsCollection =
             static_cast<StartTimeDetector::ScintHitsCollection *>(event->GetHCofThisEvent()->GetHC(hcID));
@@ -120,8 +119,7 @@ namespace Cosmic
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-    StartTimeDetector::PMTHitsCollection *Cosmic::EventAction::GetHitsCollection_PMT(G4int hcID,
-                                                                                     const G4Event *event) const
+    StartTimeDetector::PMTHitsCollection *EventAction::GetHitsCollection_PMT(G4int hcID, const G4Event *event) const
     {
         auto hitsCollection =
             static_cast<StartTimeDetector::PMTHitsCollection *>(event->GetHCofThisEvent()->GetHC(hcID));
@@ -138,8 +136,8 @@ namespace Cosmic
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-    StartTimeDetector::PMTHitsCollection *Cosmic::EventAction::GetHitsCollection_PMT_TRIG(G4int hcID,
-                                                                                          const G4Event *event) const
+    StartTimeDetector::PMTHitsCollection *EventAction::GetHitsCollection_PMT_TRIG(G4int hcID,
+                                                                                  const G4Event *event) const
     {
         auto hitsCollection =
             static_cast<StartTimeDetector::PMTHitsCollection *>(event->GetHCofThisEvent()->GetHC(hcID));
@@ -156,8 +154,7 @@ namespace Cosmic
 
     //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-    StartTimeDetector::SiPMHitsCollection *Cosmic::EventAction::GetHitsCollection_SiPM(G4int hcID,
-                                                                                       const G4Event *event) const
+    StartTimeDetector::SiPMHitsCollection *EventAction::GetHitsCollection_SiPM(G4int hcID, const G4Event *event) const
     {
         auto hitsCollection =
             static_cast<StartTimeDetector::SiPMHitsCollection *>(event->GetHCofThisEvent()->GetHC(hcID));
@@ -471,25 +468,25 @@ namespace Cosmic {
 
 #ifdef START_TIME_DETECTOR
         if (fScintStartTimeDetectorCollID == -1)
-            fScintStartTimeDetectorCollID = SDman->GetCollectionID("scintstarttimedetectorCollection");
+            fScintStartTimeDetectorCollID = SDman->GetCollectionID("scintstdCollection");
 
-#if defined(isRUN23) || defined(isRUN21)
-        if (fSiPMCollID < 0)
-            fSiPMCollID = SDman->GetCollectionID("sipmHitCollection");
-#endif
-
-#if defined(isRUN25) || defined(isFEU187)
-        // if (fPMTCollID < 0)
-        //     fPMTCollID = SDman->GetCollectionID("pmtHitCollection");
-
-        // if (fLightGuideCollID < 0)
-        //     fLightGuideCollID = SDman->GetCollectionID("light_guideCollection");
-#endif
-
-#ifdef isWLSFiber
-        if (fWLSsipmCollID < 0)
-            fWLSsipmCollID = SDman->GetCollectionID("WLSsipmHitCollection"); // "WLSsipmHitCollection"
-#endif
+        // #if defined(isRUN23) || defined(isRUN21)
+        //         if (fSiPMCollID < 0)
+        //             fSiPMCollID = SDman->GetCollectionID("sipmHitCollection");
+        // #endif
+        //
+        // #if defined(isRUN25) || defined(isFEU187)
+        //         // if (fPMTCollID < 0)
+        //         //     fPMTCollID = SDman->GetCollectionID("pmtHitCollection");
+        //
+        //         // if (fLightGuideCollID < 0)
+        //         //     fLightGuideCollID = SDman->GetCollectionID("light_guideCollection");
+        // #endif
+        //
+        // #ifdef isWLSFiber
+        //         if (fWLSsipmCollID < 0)
+        //             fWLSsipmCollID = SDman->GetCollectionID("WLSsipmHitCollection"); // "WLSsipmHitCollection"
+        // #endif
 
 #endif
     }
@@ -602,6 +599,7 @@ namespace Cosmic {
         auto event_info = (EventInfo *) event->GetUserInformation();
         // EventInfo* event_info =(EventInfo*)event->GetUserInformation();
 
+
         if (event_info == NULL) return;
 
 
@@ -702,6 +700,7 @@ namespace Cosmic {
 
             vertex_number_vertex++;
         }
+
 
         //
         // Fill histograms & ntuple
@@ -872,20 +871,34 @@ namespace Cosmic {
         // #endif
 
 #ifdef isWLSFiber
-        auto WLSsipm_HC = GetHitsCollection_SiPM(fWLSsipmCollID, event);
-        if (!WLSsipm_HC)
-            return;
-        SiPMHit *WLSsipm_Hit[fNof_WLSsipm + 1];
-        WLSsipm_Hit[0] = (*WLSsipm_HC)[WLSsipm_HC->entries() - 1];
+        // auto WLSsipm_HC = GetHitsCollection_SiPM(fWLSsipmCollID, event);
+        // if (!WLSsipm_HC)
+        //     return;
+        // SiPMHit *WLSsipm_Hit[fNof_WLSsipm + 1];
+        // WLSsipm_Hit[0] = (*WLSsipm_HC)[WLSsipm_HC->entries() - 1];
 #endif
 
 #if defined(isRUN23) || defined(isRUN21)
-        auto sipm_HC = GetHitsCollection_SiPM(fSiPMCollID, event);
-        if (!sipm_HC)
-            return;
-        SiPMHit *sipm_Hit[fNof_SiPM + 1];
-        sipm_Hit[0] = (*sipm_HC)[sipm_HC->entries() - 1];
+        // auto sipm_HC = GetHitsCollection_SiPM(fSiPMCollID, event);
+        // if (!sipm_HC)
+        //     return;
+        // SiPMHit *sipm_Hit[fNof_SiPM + 1];
+        // sipm_Hit[0] = (*sipm_HC)[sipm_HC->entries() - 1];
 #endif
+
+
+
+#endif
+
+#ifdef GEM
+        auto GEM_HC = GetHitsCollection_GEM(fGEMCollID, event);
+        if (!GEM_HC)
+            return;
+        GEMHit *GEM_Hit[fNof_GEM + 1];
+        GEM_Hit[0] = (*GEM_HC)[GEM_HC->entries() - 1];
+
+#endif
+
 
         // Get the hit collections
         if (hitsCE)
@@ -938,28 +951,14 @@ namespace Cosmic {
                 sipmHC = (StartTimeDetector::SiPMHitsCollection *)(hitsCE->GetHC(fSiPMCollID));
             }
 #endif
-        }
-
-#endif
 
 #ifdef GEM
-        auto GEM_HC = GetHitsCollection_GEM(fGEMCollID, event);
-        if (!GEM_HC)
-            return;
-        GEMHit *GEM_Hit[fNof_GEM + 1];
-        GEM_Hit[0] = (*GEM_HC)[GEM_HC->entries() - 1];
-
-        if (hitsCE)
-        {
             if (fGEMCollID >= 0)
             {
                 gemHC = (GEMHitsCollection *)(hitsCE->GetHC(fGEMCollID));
             }
-        }
-
-
 #endif
-
+        }
 
 
         plastic_thin_nsys1Hit[0] = (*plastic_thin_nsys1HC)[plastic_thin_nsys1HC->entries() - 1];
@@ -2672,6 +2671,7 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
 
                 if (i >= 1)
                     GEM_Hit[i] = (*GEM_HC)[i - 1];
+
                 auto GEM_Hit_ = GEM_Hit[i];
 
                 // index_GEM = i;
@@ -2719,15 +2719,15 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
                 // fGEM_Mass[0] = GEM_Hit_->GetMass() / MeV;
                 // fGEM_KineticEnergy[0] = GEM_Hit_->GetKineticEnergy() / MeV;
 
-                // if (GEM_Hit_->GetEdep() > GEM_threshold_TDC)
-                if (GEM_Hit_->GetEdep() >= 0)
+                if (GEM_Hit_->GetEdep() > GEM_threshold_TDC)
+                // if (GEM_Hit_->GetEdep() >= 0)
                 {
                     de_GEM_dep[index2_GEM] = 1;
 
                     de_GEM_dep[0] = 1;
                 }
 
-                G4cerr << "GEM_Hit_->GetEdep() =  (KeV) " << (GEM_Hit_->GetEdep()) / keV << G4endl;
+                //  G4cerr << "GEM_Hit_->GetEdep() =  (KeV) " << (GEM_Hit_->GetEdep()) / keV << G4endl;
 
                 continue;
                 // }
@@ -2742,9 +2742,9 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
 
         // СЦИНТИЛЛЯТОР
 
-        if (scintStartTimeDetectorHC)
-        {
-            if (1)
+        //    if (scintStartTimeDetectorHC)
+        //   {
+        if (1)
             {
                 for (G4int i = 0; i <= StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR; i++)
                 {
@@ -2800,7 +2800,6 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
                         StartTimeDetector::plastic_SCINT_threshold)
                     {
 
-
                         //  if (flaq_is_SCINT_tof_SCINT1[i] == true)
                         //  {
 
@@ -2814,11 +2813,11 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
                         de_OpticalScintStartTimeDetector_dep[0] = 1;
                     }
 
-                    G4cerr << "StartTimeDetector_Hit_->GetEdep() =  (KeV) "
-                           << (plastic_SCINT_START_TIME_DETECTOR_Hit[i]->GetEdep()) / keV << G4endl;
+                    //   G4cerr << "StartTimeDetector_Hit_->GetEdep() =  (KeV) "
+                    //         << (plastic_SCINT_START_TIME_DETECTOR_Hit[i]->GetEdep()) / keV << G4endl;
                 }
             }
-        }
+            //   }
 
 #if defined(isRUN25) || defined(isFEU187)
 
@@ -3360,7 +3359,7 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
          if (analysisManager)
          {
 
-             G4cerr << "!!!" << G4endl;
+             //  G4cerr << "!!!" << G4endl;
 
 #ifdef isTrigCosmic
              if (1 && (hcdep[0] == 3 && hcdep[1] == 3))
@@ -3388,7 +3387,7 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
               || ((de_fat_dep[1]) && ((hcdep[0] == 3) || de_fat_dep[0]))
 
 #ifdef isTrigGEM
-                        || (de_GEM_dep[0] == 1)
+                        || ((de_GEM_dep[0] == 1) or de_OpticalScintStartTimeDetector_dep[0] == 1)
 #endif
                             )
 
@@ -3430,7 +3429,7 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
 
 #endif
 
-                            G4cout << "Taken!" << G4endl;
+                            // G4cout << "Taken!" << G4endl;
                             analysisManager->AddNtupleRow(0);
                         }
 
@@ -3442,12 +3441,12 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
                     }
 
 
-                    if (analysisManager)
-                    {
-
-                        G4cout << "Taken 2 !" << G4endl;
-                        analysisManager->AddNtupleRow(0);
-                    }
+                    // if (analysisManager)
+                    // {
+                    //
+                    //     G4cout << "Taken 2 !" << G4endl;
+                    //     analysisManager->AddNtupleRow(0);
+                    // }
 
 
                     // extract the trajectories and draw them

@@ -198,6 +198,16 @@ endif ()
 add_executable(cosmic cosmic.cc ${sources} ${headers})
 target_link_libraries(cosmic PUBLIC ROOT::RIO ROOT::Net ROOT::MathCore ${ROOT_LIBRARIES} ${Geant4_LIBRARIES})
 
+target_include_directories(cosmic PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/../cosmic/src/TaggingSystem
+        ${CMAKE_CURRENT_SOURCE_DIR}/../cosmic/include/TaggingSystem
+)
+
+target_include_directories(cosmic PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector
+        ${CMAKE_CURRENT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector
+)
+
 include_directories(${PROJECT_SOURCE_DIR}/include/TaggingSystem
         ${PROJECT_SOURCE_DIR}/../start_time_detector/include/
         ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector

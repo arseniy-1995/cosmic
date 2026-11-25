@@ -293,15 +293,27 @@ namespace Cosmic {
 
             fGeneratorActionTaggSys->GenerateElectronGEM(anEvent);
             fParticleGun = (fGeneratorActionTaggSys->GetParticleGun());
-            fParticleGun->GeneratePrimaryVertex(anEvent);
-
-            // G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
-            // G4ParticleDefinition *particle = particleTable->FindParticle("mu-");
-            // fParticleGun->SetParticleDefinition(particle);
-            // fParticleGun->SetParticleEnergy(2000 * MeV);
-            // fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0.));
-            //     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.1, 0., 1.));
             // fParticleGun->GeneratePrimaryVertex(anEvent);
+
+            EventInfo *info = new EventInfo();
+            //   pn2020EventInfo* info =(pn2020EventInfo*)anEvent->GetUserInformation();
+            info->SetEgamma(500. * MeV);
+            info->SetNreac(1);
+            info->SetNp(1);
+            info->SetEntry(FileNum);
+            anEvent->SetUserInformation(info);
+
+            //    G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
+         //    G4ParticleDefinition *particle = particleTable->FindParticle("mu-");
+         //    fParticleGun->SetParticleDefinition(particle);
+         //    fParticleGun->SetParticleEnergy(2000 * MeV);
+         // fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0.));
+         //     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.1, 0., 1.));
+         //
+         //  //  fParticleGun->SetParticlePosition(G4ThreeVector(0., 30. * cm, 99. * cm));
+         //   // fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.0, -1., 0.));
+         //
+         //    fParticleGun->GeneratePrimaryVertex(anEvent);
 
             // GenerateProton(anEvent);
 

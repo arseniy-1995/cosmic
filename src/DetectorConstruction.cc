@@ -643,7 +643,7 @@ namespace Cosmic {
 
         /////
 
-        //  G4Material* Air  = man->FindOrBuildMaterial("G4_AIR");
+        G4Material *Air_material = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
 
         G4Material *Concrete = nistManager->FindOrBuildMaterial("G4_CONCRETE"); //бетон, поиск в стандартной таблице
 
@@ -3374,9 +3374,8 @@ new G4PVPlacement(G4Transform3D(RotateNull,
         if (!fScintStartTimeDetector_SD.Get())
         {
             G4cout << "Construction /scintSD" << G4endl;
-            StartTimeDetector::ScintSD *scint_start_time_detector_SD =
-                new StartTimeDetector::ScintSD("/scintSD", "scintstarttimedetectorCollection",
-                                               StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR);
+            StartTimeDetector::ScintSD *scint_start_time_detector_SD = new StartTimeDetector::ScintSD(
+                "/scintSD", "scintstdCollection", StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR);
             scint_start_time_detector_SD->SetDiscrThres(StartTimeDetector::plastic_SCINT_threshold);
             fScintStartTimeDetector_SD.Put(scint_start_time_detector_SD);
         }
@@ -3476,6 +3475,8 @@ new G4PVPlacement(G4Transform3D(RotateNull,
             SetSensitiveDetector(GEMLV, fGEM_SD.Get());
             // SetSensitiveDetector("PhotonDet_LV", fGEM_SD.Get(), true);
             // box_GEM_log->SetSensitiveDetector(fGEM_SD);
+            // GEMLV->SetSensitiveDetector(fGEM_SD.Get());
+            // GEMLV->SetSensitiveDetector(gem_SD);
         }
 
 

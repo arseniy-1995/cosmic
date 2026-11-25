@@ -130,6 +130,7 @@ namespace Cosmic
 
         G4int fCurrentNtupleId = 0;
 
+
         if (fEventAction)
         {
 

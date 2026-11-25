@@ -126,7 +126,7 @@ namespace Cosmic
         if (edep == 0.)
         {
             // G4cerr << "!!!" << G4endl;
-            // return true;
+            return true;
         }
 
 
