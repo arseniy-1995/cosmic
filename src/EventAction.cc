@@ -41,6 +41,14 @@
 #include "PlasticHit.hh"
 #include "TaggingSystem/GEMHit.hh"
 
+#include "../../start_time_detector/include/StartTimeDetector/PMTSD.hh"
+#include "../../start_time_detector/include/StartTimeDetector/ScintSD.hh"
+#include "../../start_time_detector/include/StartTimeDetector/SiPMSD.hh"
+
+#include "../../start_time_detector/include/StartTimeDetector/PMTHit.hh"
+#include "../../start_time_detector/include/StartTimeDetector/ScintHit.hh"
+#include "../../start_time_detector/include/StartTimeDetector/SiPMHit.hh"
+
 #include "G4AnalysisManager.hh"
 #include "G4Event.hh"
 #include "G4HCofThisEvent.hh"
@@ -105,6 +113,78 @@ namespace Cosmic
 
         return hitsCollection;
     }
+
+    StartTimeDetector::ScintHitsCollection *EventAction::GetHitsCollection_Scint(G4int hcID, const G4Event *event) const
+    {
+        auto hitsCollection =
+            static_cast<StartTimeDetector::ScintHitsCollection *>(event->GetHCofThisEvent()->GetHC(hcID));
+
+        if (!hitsCollection)
+        {
+            G4ExceptionDescription msg;
+            msg << "Cannot access hitsCollection ID " << hcID;
+            G4Exception("EventAction::GetHitsCollection()", "MyCode0003", FatalException, msg);
+        }
+
+        return hitsCollection;
+    }
+
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+    StartTimeDetector::PMTHitsCollection *EventAction::GetHitsCollection_PMT(G4int hcID, const G4Event *event) const
+    {
+        auto hitsCollection =
+            static_cast<StartTimeDetector::PMTHitsCollection *>(event->GetHCofThisEvent()->GetHC(hcID));
+
+        if (!hitsCollection)
+        {
+            G4ExceptionDescription msg;
+            msg << "Cannot access hitsCollection ID " << hcID;
+            G4Exception("EventAction::GetHitsCollection()", "MyCode0003", FatalException, msg);
+        }
+
+        return hitsCollection;
+    }
+
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+    StartTimeDetector::PMTHitsCollection *EventAction::GetHitsCollection_PMT_TRIG(G4int hcID,
+                                                                                  const G4Event *event) const
+    {
+        auto hitsCollection =
+            static_cast<StartTimeDetector::PMTHitsCollection *>(event->GetHCofThisEvent()->GetHC(hcID));
+
+        if (!hitsCollection)
+        {
+            G4ExceptionDescription msg;
+            msg << "Cannot access hitsCollection ID " << hcID;
+            G4Exception("EventAction::GetHitsCollection()", "MyCode0003", FatalException, msg);
+        }
+
+        return hitsCollection;
+    }
+
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+    StartTimeDetector::SiPMHitsCollection *EventAction::GetHitsCollection_SiPM(G4int hcID, const G4Event *event) const
+    {
+        auto hitsCollection =
+            static_cast<StartTimeDetector::SiPMHitsCollection *>(event->GetHCofThisEvent()->GetHC(hcID));
+
+        if (!hitsCollection)
+        {
+            G4ExceptionDescription msg;
+            msg << "Cannot access hitsCollection ID " << hcID;
+            G4Exception("EventAction::GetHitsCollection()", "MyCode0003", FatalException, msg);
+        }
+
+        return hitsCollection;
+    }
+
+
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 }
 
@@ -268,6 +348,80 @@ namespace Cosmic {
         {
             flaq_is_trig_tof_HC2_Z[i] = true;
         }
+
+        fSiPMsAboveThreshold = 0;
+        fPMTAboveThreshold = 0;
+
+        for (G4int i = 0; i <= StartTimeDetector::fNof_SiPM_START_TIME_DETECTOR; i++)
+        {
+            fSiPM_PhotonNumber[i] = 0;
+            fSiPM_PhotonNumberScintil[i] = 0;
+            fSiPM_PhotonNumberCherenkov[i] = 0;
+        }
+
+        for (G4int i = 0; i <= StartTimeDetector::fNof_SiPMgroup_START_TIME_DETECTOR; i++)
+        {
+            fSiPMgroup_PhotonNumber[i] = 0;
+            fSiPMgroup_PhotonNumberScintil[i] = 0;
+            fSiPMgroup_PhotonNumberCherenkov[i] = 0;
+        }
+
+        // fSiPMgroup_PhotonNumber = {0, 0};
+        // fSiPMgroup_PhotonNumberScintil = {0, 0};
+        // fSiPMgroup_PhotonNumberCherenkov = {0, 0};
+
+        // fSiPM_PhotonNumber = {0, 0};
+        // fSiPM_PhotonNumberScintil = {0, 0};
+        // fSiPM_PhotonNumberCherenkov = {0, 0};
+
+        // for (int i = 0; i <= 2; i++)
+        // {
+        //     flaq_is_trig_tof_TRIG[i] = true;
+        //     flaq_is_trig_tof_TRIG_and_PMT[i] = true;
+        // }
+        for (int i = 0; i <= 1; i++)
+        {
+            flaq_is_trig_tof_SCINT_START_TIME_DETECTOR[i] = true;
+        }
+        for (int i = 0; i <= StartTimeDetector::fNof_PMT_START_TIME_DETECTOR; i++)
+        {
+            flaq_is_trig_tof_PMT[i] = true;
+        }
+        for (int i = 0; i <= StartTimeDetector::fNof_SiPM_START_TIME_DETECTOR; i++)
+        {
+            flaq_is_trig_tof_SiPM[i] = true;
+        }
+
+        G4SDManager *SDman = G4SDManager::GetSDMpointer();
+
+#ifdef GEM
+        if (fGEMCollID < 0)
+            fGEMCollID = SDman->GetCollectionID("gemCollection");
+#endif
+
+#ifdef START_TIME_DETECTOR
+        if (fScintStartTimeDetectorCollID < 0)
+            fScintStartTimeDetectorCollID = SDman->GetCollectionID("scintstarttimedetectorCollection");
+
+#if defined(isRUN23) || defined(isRUN21)
+        if (fSiPMCollID < 0)
+            fSiPMCollID = SDman->GetCollectionID("sipmHitCollection");
+#endif
+
+#if defined(isRUN25) || defined(isFEU187)
+        if (fPMTCollID < 0)
+            fPMTCollID = SDman->GetCollectionID("pmtHitCollection");
+
+        if (fLightGuideCollID < 0)
+            fLightGuideCollID = SDman->GetCollectionID("light_guideCollection");
+#endif
+
+#ifdef isWLSFiber
+        if (fWLSsipmCollID < 0)
+            fWLSsipmCollID = SDman->GetCollectionID("WLSsipmHitCollection"); // "WLSsipmHitCollection"
+#endif
+
+#endif
     }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -363,6 +517,7 @@ namespace Cosmic {
 
         // Get hits collections IDs (only once)
         G4SDManager *SDmanp = G4SDManager::GetSDMpointer();
+
         GEMHitsCollection *gemHC = nullptr;
         G4HCofThisEvent *hitsCE = event->GetHCofThisEvent();
 
@@ -412,10 +567,6 @@ namespace Cosmic {
         if (fV_Chamber_nsys2HCID == -1) fV_Chamber_nsys2HCID = SDmanp->GetCollectionID("V_Chamber_nsys2HitsCollection");
 #endif
 
-#ifdef GEM
-        if (fGEMCollID < 0)
-            fGEMCollID = SDmanp->GetCollectionID("gemCollection");
-#endif
 
         auto event_info = (EventInfo *) event->GetUserInformation();
         // EventInfo* event_info =(EventInfo*)event->GetUserInformation();
@@ -665,6 +816,7 @@ namespace Cosmic {
 #endif
         }
 
+
         plastic_thin_nsys1Hit[0] = (*plastic_thin_nsys1HC)[plastic_thin_nsys1HC->entries() - 1];
         plastic_thin_nsys2Hit[0] = (*plastic_thin_nsys2HC)[plastic_thin_nsys2HC->entries() - 1];
         plastic_LQ_nsys1Hit[0] = (*plastic_LQ_nsys1HC)[plastic_LQ_nsys1HC->entries() - 1];
@@ -681,6 +833,12 @@ namespace Cosmic {
         G4int de_thin_dep_latyer2[2] = {0, 0}; // тонкие счетчики слой2
         G4int de_LQ_dep[2] = {0, 0}; // счетчики LQ
         G4int de_GEM_dep[3 + 1] = {0, 0, 0, 0}; // счетчики GEM
+        // G4int de_TRIG_dep[2+1] = {0, 0, 0}; // счетчики TRIG
+        //  G4int de_PMT_TRIG_dep[2+1] = {0, 0, 0}; // ФЭУ 0 - это по всем
+        G4int de_OpticalScintStartTimeDetector_dep[5 + 1] = {0, 0, 0, 0, 0, 0}; // оптический сцинтиллятор
+        G4int de_PMT_dep[5 + 1] = {0, 0, 0, 0, 0, 0}; // ФЭУ 0 - это по всем
+        G4int de_WLSSiPM_dep[4 + 1] = {0, 0, 0, 0, 0}; // WLS SiPM 0 - это по всем
+        G4int de_SiPM_dep[50 + 1] = {0, 0, 0, 0, 0}; // WLS SiPM 0 - это по всем
 
         //  HadronCalorimeter_nsys1HC->GetHit(0)->
 

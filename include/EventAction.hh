@@ -39,6 +39,11 @@
 #include "PlasticHit.hh"
 #include "TaggingSystem/GEMHit.hh"
 
+#include "../../start_time_detector/include/StartTimeDetector/PMTHit.hh"
+#include "../../start_time_detector/include/StartTimeDetector/ScintHit.hh"
+#include "../../start_time_detector/include/StartTimeDetector/SiPMHit.hh"
+
+
 #include "globals.hh"
 
 #include <vector>
@@ -1240,6 +1245,11 @@ namespace Cosmic {
     private:
         GEMHitsCollection *GetHitsCollection_GEM(G4int hcID, const G4Event *event) const;
 
+        StartTimeDetector::ScintHitsCollection *GetHitsCollection_Scint(G4int hcID, const G4Event *event) const;
+        StartTimeDetector::PMTHitsCollection *GetHitsCollection_PMT(G4int hcID, const G4Event *event) const;
+        StartTimeDetector::PMTHitsCollection *GetHitsCollection_PMT_TRIG(G4int hcID, const G4Event *event) const;
+        StartTimeDetector::SiPMHitsCollection *GetHitsCollection_SiPM(G4int hcID, const G4Event *event) const;
+
         G4bool flaq_is_trig_tof_fat1[6 + 1] = {true, true, true, true, true, true, true};
         G4bool flaq_is_trig_tof_fat2[8 + 1] = {true, true, true, true, true, true, true, true, true};
 
@@ -1259,6 +1269,18 @@ namespace Cosmic {
         G4bool flaq_is_trig_tof_HC2_Z[22 + 1] = {true, true, true, true, true, true, true, true, true, true, true, true,
                                                  true, true, true, true, true, true, true, true, true, true, true};
 
+
+        G4bool flaq_is_trig_tof_GEM[fNof_GEM + 1] = {true, true, true, true};
+
+
+        //   G4bool flaq_is_trig_tof_TRIG[2 + 1] = {true, true, true};
+        //   G4bool flaq_is_trig_tof_TRIG_and_PMT[2 + 1] = {true, true, true}; // это для триггерных счетчиков и расчет
+        //   фотонов
+        G4bool flaq_is_trig_tof_SCINT_START_TIME_DETECTOR[StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR +
+                                                          1] = {true, true};
+        G4bool flaq_is_trig_tof_PMT[StartTimeDetector::fNof_PMT_START_TIME_DETECTOR + 1] = {true, true};
+        G4bool flaq_is_trig_tof_SiPM[StartTimeDetector::fNof_SiPM_START_TIME_DETECTOR + 1] = {true, true, true, true,
+                                                                                              true};
 
         G4double vertex_x, vertex_y, vertex_z;    // vertex position
         G4int vertex_index, vertex_number_event;// number of vertexes (particles)
@@ -2014,7 +2036,22 @@ namespace Cosmic {
         G4int fV_Chamber_nsys2HCID = -1;
 
 
+        G4int fSiPMsAboveThreshold = 0;
+        G4int fPMTAboveThreshold = 0;
+
         G4int fGEMCollID = -1;
+        //  G4int fTrigCountCollID = -1;
+        //  G4int fTrigCount_and_PMTCollID = -1;
+        G4int fScintStartTimeDetectorCollID = -1;
+        G4int fSiPMCollID = -1;
+        G4int fPMTCollID = -1;
+        G4int fLightGuideCollID = -1;
+        G4int fWLSsipmCollID = -1;
+
+        G4int fVerbose = 0;
+
+        G4int fSiPMThreshold = 1;
+        G4int fPMTThreshold = 1;
     };
 
 
