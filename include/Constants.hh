@@ -74,6 +74,72 @@ namespace StartTimeDetector
     constexpr G4double ScintilStartTimeDetector_z_const = 22.0 * cm / 2.;
 
 
+    constexpr G4double SiPMHalfLength = 3. * mm / 2.;
+    constexpr G4double SiPMHalfHeight = 1.45 * mm / 2.;
+
+    //  constexpr G4int fNof_plastic_TRIG = 2;
+
+
+#if not(defined(isScinFiveParts) or defined(isScinFivePartsVer2))
+    constexpr G4int fNof_plastic_SCINT_START_TIME_DETECTOR = 1;
+#endif
+
+#if not defined(isFEU187)
+    constexpr G4int fNof_PMT_START_TIME_DETECTOR = 5; // число ФЭУ // 5
+#endif
+
+#if defined(isFEU187)
+
+#if not defined(isFEU187_three_svetovod) and not defined(isFEU187_mirror)
+#if not(defined(isFEU187_quadro) or defined(isFEU187_quadro_svetovod) or defined(isFEU187_two_mirror) or               \
+        defined(isFEU187_two_black_mirror) or defined(isFEU187_two_all_black_mirror))
+    constexpr G4int fNof_PMT_START_TIME_DETECTOR = 2;
+#endif
+#endif
+#if defined(isFEU187_mirror) and                                                                                       \
+    not(defined(isFEU187_two_mirror) or defined(isFEU187_two_black_mirror) or defined(isFEU187_two_all_black_mirror))
+    constexpr G4int fNof_PMT_START_TIME_DETECTOR = 1;
+#endif
+#if defined(isFEU187_two_mirror) or defined(isFEU187_two_black_mirror) or defined(isFEU187_two_all_black_mirror)
+    constexpr G4int fNof_PMT_START_TIME_DETECTOR = 2;
+#endif
+#if defined(isFEU187_three_svetovod)
+    constexpr G4int fNof_PMT_START_TIME_DETECTOR = 3;
+#endif
+
+#if defined(isFEU187_quadro) or defined(isFEU187_quadro_svetovod)
+    constexpr G4int fNof_PMT_START_TIME_DETECTOR = 4;
+#endif
+
+#endif
+
+
+    constexpr G4int fNof_WLSsipm_START_TIME_DETECTOR = 4; // число WLS SiPM // 5
+
+#if defined(isScinFiveParts) or defined(isScinFivePartsVer2)
+    constexpr G4int fNof_plastic_SCINT_START_TIME_DETECTOR = fNof_PMT;
+#endif
+
+#if not(defined(isRUN21) || defined(isRUN23) || defined(isRUN21SvetovodSiPM) || defined(isWLSFiber))
+    constexpr G4int fNof_SiPM_START_TIME_DETECTOR = 8;
+    constexpr G4int fNof_SiPMgroup_START_TIME_DETECTOR = 2; // 2
+#endif
+
+#ifdef isWLSFiber
+    constexpr G4int fNof_SiPM_START_TIME_DETECTOR = fNof_WLSsipm; // число SiPM // 5
+    constexpr G4int fNof_SiPMgroup_START_TIME_DETECTOR = 2; // 2
+#endif
+
+#if defined(isRUN21) || defined(isRUN21SvetovodSiPM)
+    constexpr G4int fNof_SiPM_START_TIME_DETECTOR = 8;
+    constexpr G4int fNof_SiPMgroup_START_TIME_DETECTOR = 2; // 2
+#endif
+#ifdef isRUN23
+    constexpr G4int fNof_SiPM_START_TIME_DETECTOR = 24 + 0; // 8
+    constexpr G4int fNof_SiPMgroup_START_TIME_DETECTOR = 6; // 8
+#endif
+
+
 } // namespace StartTimeDetector
 
 

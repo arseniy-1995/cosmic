@@ -1098,7 +1098,7 @@ namespace Cosmic
 
 #endif
 
-#ifdef START_TIME_DETECTOR1
+#ifdef START_TIME_DETECTOR
 
             // Стартовый счетчик СЦИНТИЛЛЯТОР
 

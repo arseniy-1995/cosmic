@@ -1036,6 +1036,188 @@ namespace Cosmic {
         std::vector<G4float> &Get_GEM_Phi() { return fGEM_Phi; }
 
 
+        ///////// СТАРТОВЫЙ ДЕТЕКТОР (ОПТИЧЕСКИЙ) СЦИНТИЛЛЯТОР
+
+        std::vector<G4int> &GetTrackIDPlasticSCINT() { return fPlastic_SCINTTrackID; }
+
+        std::vector<G4float> &GetPlasticSCINTEdep() { return fPlastic_SCINT_Edep; }
+
+        std::vector<G4float> &GetPlasticSCINTLO() { return fPlastic_SCINT_LO; }
+
+        std::vector<G4float> &GetPlasticSCINTA1() { return fPlastic_SCINT_A1; }
+
+        std::vector<G4float> &GetPlasticSCINTA2() { return fPlastic_SCINT_A2; }
+
+        std::vector<G4float> &GetPlasticSCINTT1() { return fPlastic_SCINT_T1; }
+
+        std::vector<G4float> &GetPlasticSCINTT2(G4int nsys = 1) { return fPlastic_SCINT_T2; }
+
+        std::vector<G4float> &GetPlasticSCINTTrackLength() { return fPlastic_SCINT_TrackLength; }
+
+        std::vector<G4float> &GetPlasticSCINTToF() { return fPlastic_SCINT_ToF; }
+
+        std::vector<G4float> &GetPlasticSCINTPos(G4int index = 1)
+        {
+            if (index == 1)
+                return fPlastic_SCINT_XPos;
+            if (index == 2)
+                return fPlastic_SCINT_YPos;
+            if (index == 3)
+                return fPlastic_SCINT_ZPos;
+            return fPlastic_SCINT_XPos;
+        }
+
+        std::vector<G4float> &GetPlasticSCINTGlobalPos(G4int index = 1)
+        {
+            if (index == 1)
+                return fPlastic_SCINT_global_XPos;
+            if (index == 2)
+                return fPlastic_SCINT_global_YPos;
+            if (index == 3)
+                return fPlastic_SCINT_global_ZPos;
+            return fPlastic_SCINT_global_XPos;
+        }
+
+        std::vector<G4float> &GetPlasticSCINTAngle(G4int index = 1)
+        {
+            if (index == 1)
+                return fPlastic_SCINT_Theta;
+            if (index == 2)
+                return fPlastic_SCINT_Phi;
+            return fPlastic_SCINT_Theta;
+        }
+
+        std::vector<G4float> &GetPlasticSCINTAngleGlob(G4int index = 1)
+        {
+            if (index == 1)
+                return fPlastic_SCINT_ThetaGlob;
+            if (index == 2)
+                return fPlastic_SCINT_PhiGlob;
+            return fPlastic_SCINT_ThetaGlob;
+        }
+
+        std::vector<G4int> &GetPlasticSCINTPhotonNumber() { return fPlastic_SCINT_PhotonNumber; }
+
+        std::vector<G4int> &GetPlasticSCINTPhotonNumberScintil() { return fPlastic_SCINT_PhotonNumberScintil; }
+
+        std::vector<G4int> &GetPlasticSCINTPhotonNumberCherenkov() { return fPlastic_SCINT_PhotonNumberCherenkov; }
+
+
+        // void AddLightGuidePhotonNumberCherenkov(G4int id) {
+        //      fLight_Guide_PhotonNumberCherenkov.at(id) +=1;
+        //  }
+
+        ////////////////
+
+        // PMT
+
+        std::vector<G4float> &GetPMTToF() { return fPMT_ToF; }
+        std::vector<G4float> &GetPMTToFN(G4int i)
+        {
+            if (i == 1)
+                return fPMT_ToF1N;
+            if (i == 2)
+                return fPMT_ToF2N;
+            if (i == 3)
+                return fPMT_ToF3N;
+            if (i == 4)
+                return fPMT_ToF4N;
+            if (i == 5)
+                return fPMT_ToF5N;
+            //  return fPMT_ToF1N;
+            //  return fPMT_ToFN.at(i);
+            // return fPMT_ToFN[i];
+
+            return fPMT_ToF1N;
+        } // по N-фотоэлектрону
+
+        std::vector<G4float> &GetPMTLength() { return fPMT_TrackLength; }
+
+        std::vector<G4int> &GetPMTNPhoton() { return fPMT_PhotonNumber; }
+        std::vector<G4int> &GetPMTNPhotonScintil() { return fPMT_PhotonNumberScintil; }
+        std::vector<G4int> &GetPMTNPhotonCherenkov() { return fPMT_PhotonNumberCherenkov; }
+
+        std::vector<G4int> &GetLightGuidePhotonNumberCherenkov() { return fLight_Guide_PhotonNumberCherenkov; }
+
+        // PMT TRIG
+
+        // std::vector<G4float> &GetPMT_TRIG_ToF() { return fPMT_TRIG_ToF; }
+        // std::vector<G4float> &GetPMT_TRIG_ToFN(G4int i) {
+        //     if (i==1) return fPMT_TRIG_ToF1N;
+        //     if (i==2) return fPMT_TRIG_ToF2N;
+        //
+        //     //  return fPMT_TRIG_ToF1N;
+        //     //  return fPMT_TRIG_ToFN.at(i);
+        //     // return fPMT_TRIG_ToFN[i];
+        //
+        //     return fPMT_TRIG_ToF1N;
+        // } // по N-фотоэлектрону
+        //
+        // std::vector<G4float> &GetPMT_TRIG_Length() { return fPMT_TRIG_TrackLength; }
+        //
+        // std::vector<G4int> &GetPMT_TRIG_NPhoton() { return fPMT_TRIG_PhotonNumber; }
+        // std::vector<G4int> &GetPMT_TRIG_NPhotonScintil() { return fPMT_TRIG_PhotonNumberScintil; }
+        // std::vector<G4int> &GetPMT_TRIG_NPhotonCherenkov() { return fPMT_TRIG_PhotonNumberCherenkov; }
+
+
+        // SiPM
+
+        std::vector<G4float> &GetSiPMToF() { return fSiPM_ToF; }
+        std::vector<G4float> &GetSiPMToFN(G4int i)
+        {
+            if (i == 1)
+                return fSiPM_ToF1N;
+            if (i == 2)
+                return fSiPM_ToF2N;
+            if (i == 3)
+                return fSiPM_ToF3N;
+            if (i == 4)
+                return fSiPM_ToF4N;
+            if (i == 5)
+                return fSiPM_ToF5N;
+            if (i == 6)
+                return fSiPM_ToF6N;
+            return fSiPM_ToF1N;
+            // return fSiPM_ToFN.at(i);
+        } // по N-фотоэлектрону
+
+        std::vector<G4float> &GetSiPMLength() { return fSiPM_TrackLength; }
+
+        std::vector<G4int> &GetSiPMNPhoton() { return fSiPM_PhotonNumber; }
+        std::vector<G4int> &GetSiPMNPhotonScintil() { return fSiPM_PhotonNumberScintil; }
+        std::vector<G4int> &GetSiPMNPhotonCherenkov() { return fSiPM_PhotonNumberCherenkov; }
+
+        // SiPM group
+
+        std::vector<G4float> &GetSiPMgroupToF() { return fSiPMgroup_ToF; }
+        std::vector<G4float> &GetSiPMgroupToFN(G4int i)
+        {
+            if (i == 1)
+                return fSiPMgroup_ToF1N;
+            if (i == 2)
+                return fSiPMgroup_ToF2N;
+            if (i == 3)
+                return fSiPMgroup_ToF3N;
+            if (i == 4)
+                return fSiPMgroup_ToF4N;
+            if (i == 5)
+                return fSiPMgroup_ToF5N;
+            if (i == 6)
+                return fSiPMgroup_ToF6N;
+            return fSiPMgroup_ToF1N;
+            //  return fSiPMgroup_ToFN.at(i);
+        } // по N-фотоэлектрону
+
+        std::vector<G4float> &GetSiPMgroupLength() { return fSiPMgroup_TrackLength; }
+
+        std::vector<G4int> &GetSiPMgroupNPhoton() { return fSiPMgroup_PhotonNumber; }
+        std::vector<G4int> &GetSiPMgroupNPhotonScintil() { return fSiPMgroup_PhotonNumberScintil; }
+        std::vector<G4int> &GetSiPMgroupNPhotonCherenkov() { return fSiPMgroup_PhotonNumberCherenkov; }
+
+
+        ////////////////
+
+
         ///
 
         std::vector<G4float> &GetVertexXYZ(G4int index = 1) {
@@ -1673,6 +1855,131 @@ namespace Cosmic {
         std::vector<G4float> fGEM_global_ZPos{std::vector<G4float>(NGEM + 1, 1e9)};
 
         ////////
+
+        //////////////
+
+
+        std::vector<G4int> fPlastic_SCINTTrackID{
+            std::vector<G4int>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, -5)};
+        std::vector<G4float> fPlastic_SCINT_Edep{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 0.)};
+        std::vector<G4float> fPlastic_SCINT_LO{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 0.)};
+        std::vector<G4float> fPlastic_SCINT_A1{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 0.)};
+        std::vector<G4float> fPlastic_SCINT_A2{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 0.)};
+        std::vector<G4float> fPlastic_SCINT_T1{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 0.)};
+        std::vector<G4float> fPlastic_SCINT_T2{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 0.)};
+        std::vector<G4float> fPlastic_SCINT_TrackLength{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 0.)};
+        std::vector<G4float> fPlastic_SCINT_ToF{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 0.)};
+        std::vector<G4float> fPlastic_SCINT_XPos{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 1e9)};
+        std::vector<G4float> fPlastic_SCINT_YPos{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 1e9)};
+        std::vector<G4float> fPlastic_SCINT_ZPos{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 1e9)};
+        std::vector<G4float> fPlastic_SCINT_global_XPos{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 1e9)};
+        std::vector<G4float> fPlastic_SCINT_global_YPos{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 1e9)};
+        std::vector<G4float> fPlastic_SCINT_global_ZPos{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 1e9)};
+        std::vector<G4float> fPlastic_SCINT_Theta{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 1e9)};
+        std::vector<G4float> fPlastic_SCINT_Phi{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 1e9)};
+        std::vector<G4float> fPlastic_SCINT_ThetaGlob{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 1e9)};
+        std::vector<G4float> fPlastic_SCINT_PhiGlob{
+            std::vector<G4float>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 1e9)};
+        std::vector<G4int> fPlastic_SCINT_PhotonNumber{
+            std::vector<G4int>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 0)};
+        std::vector<G4int> fPlastic_SCINT_PhotonNumberScintil{
+            std::vector<G4int>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 0)};
+        std::vector<G4int> fPlastic_SCINT_PhotonNumberCherenkov{
+            std::vector<G4int>(StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR + 1, 0)};
+
+
+        /////////////
+        // PMT
+        const G4int fNof_SiPMgroup_phe = 1000;
+
+        std::vector<G4float> fPMT_ToF{std::vector<G4float>(StartTimeDetector::fNof_PMT_START_TIME_DETECTOR + 1, 0.)};
+        // std::vector<std::vector<G4float>> fPMT_ToFN{ fNof_PMT + 1,{std::vector<G4float>(fNof_SiPMgroup_phe + 1,
+        // 1e9)}};
+        std::vector<G4float> fPMT_ToF1N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fPMT_ToF2N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fPMT_ToF3N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fPMT_ToF4N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fPMT_ToF5N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fPMT_TrackLength{
+            std::vector<G4float>(StartTimeDetector::fNof_PMT_START_TIME_DETECTOR + 1, 0.)};
+        std::vector<G4int> fPMT_PhotonNumber{
+            std::vector<G4int>(StartTimeDetector::fNof_PMT_START_TIME_DETECTOR + 1, 0)};
+        std::vector<G4int> fPMT_PhotonNumberScintil{
+            std::vector<G4int>(StartTimeDetector::fNof_PMT_START_TIME_DETECTOR + 1, 0)};
+        std::vector<G4int> fPMT_PhotonNumberCherenkov{
+            std::vector<G4int>(StartTimeDetector::fNof_PMT_START_TIME_DETECTOR + 1, 0)};
+
+        std::vector<G4int> fLight_Guide_PhotonNumberCherenkov{
+            std::vector<G4int>(StartTimeDetector::fNof_PMT_START_TIME_DETECTOR + 1, 0)};
+
+        // SiPM
+
+
+        std::vector<G4float> fSiPM_ToF{std::vector<G4float>(StartTimeDetector::fNof_SiPM_START_TIME_DETECTOR + 1, 0.)};
+        // std::vector<G4float> fSiPM_ToFN{std::vector<G4float>(StartTimeDetector::fNof_SiPM_START_TIME_DETECTOR + 1,
+        // 0.)};
+
+        std::vector<std::vector<G4float>> fSiPM_ToFN{StartTimeDetector::fNof_SiPM_START_TIME_DETECTOR + 1,
+                                                     {std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)}};
+        std::vector<G4float> fSiPM_ToF1N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fSiPM_ToF2N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fSiPM_ToF3N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fSiPM_ToF4N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fSiPM_ToF5N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fSiPM_ToF6N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+
+
+        std::vector<G4float> fSiPM_TrackLength{
+            std::vector<G4float>(StartTimeDetector::fNof_SiPM_START_TIME_DETECTOR + 1, 0.)};
+        std::vector<G4int> fSiPM_PhotonNumber{
+            std::vector<G4int>(StartTimeDetector::fNof_SiPM_START_TIME_DETECTOR + 1, 0)};
+        std::vector<G4int> fSiPM_PhotonNumberScintil{
+            std::vector<G4int>(StartTimeDetector::fNof_SiPM_START_TIME_DETECTOR + 1, 0)};
+        std::vector<G4int> fSiPM_PhotonNumberCherenkov{
+            std::vector<G4int>(StartTimeDetector::fNof_SiPM_START_TIME_DETECTOR + 1, 0)};
+
+        // SiPM объединение в группы по 4
+
+        //  G4int fNof_SiPMgroup = 8;
+
+
+        std::vector<G4float> fSiPMgroup_ToF{
+            std::vector<G4float>(StartTimeDetector::fNof_SiPMgroup_START_TIME_DETECTOR + 1, 1e9)};
+        // std::vector<std::vector<G4float>> fSiPMgroup_ToFN{std::vector<G4float>(fNof_SiPMgroup + 1, 1e9)};
+        // std::vector<G4float> fSiPMgroup_ToFN{std::vector<std::vector<G4float>(fNof_SiPMgroup + 1, 1e9)>};
+        std::vector<G4float> fSiPMgroup_ToF1N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fSiPMgroup_ToF2N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fSiPMgroup_ToF3N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fSiPMgroup_ToF4N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fSiPMgroup_ToF5N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        std::vector<G4float> fSiPMgroup_ToF6N{std::vector<G4float>(fNof_SiPMgroup_phe + 1, 1e9)};
+        //  std::vector<std::vector<G4float>> fSiPMgroup_ToFN{ StartTimeDetector::fNof_SiPMgroup_START_TIME_DETECTOR +
+        //  1,{std::vector<G4float>(fNof_SiPMgroup_phe, 1e9)}};
+        std::vector<G4float> fSiPMgroup_TrackLength{
+            std::vector<G4float>(StartTimeDetector::fNof_SiPMgroup_START_TIME_DETECTOR + 1, 0.)};
+        std::vector<G4int> fSiPMgroup_PhotonNumber{
+            std::vector<G4int>(StartTimeDetector::fNof_SiPMgroup_START_TIME_DETECTOR + 1, 0)};
+        std::vector<G4int> fSiPMgroup_PhotonNumberScintil{
+            std::vector<G4int>(StartTimeDetector::fNof_SiPMgroup_START_TIME_DETECTOR + 1, 0)};
+        std::vector<G4int> fSiPMgroup_PhotonNumberCherenkov{
+            std::vector<G4int>(StartTimeDetector::fNof_SiPMgroup_START_TIME_DETECTOR + 1, 0)};
 
 
         // Для GENBOS через индекс вершины
