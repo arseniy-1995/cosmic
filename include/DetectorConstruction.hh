@@ -47,7 +47,12 @@
 #include "globals.hh"
 
 #include "../../start_time_detector/include/StartTimeDetector/MainVolStartTimeDetector.hh"
-//#include "../../start_time_detector/include/Constants.hh"
+// #include "../../start_time_detector/include/Constants.hh"
+
+#include "../../start_time_detector/include/StartTimeDetector/PMTSD.hh"
+#include "../../start_time_detector/include/StartTimeDetector/ScintSD.hh"
+#include "../../start_time_detector/include/StartTimeDetector/SiPMSD.hh"
+
 
 class G4VPhysicalVolume;
 class G4GlobalMagFieldMessenger;
@@ -58,6 +63,10 @@ class G4GenericMessenger;
 
 namespace StartTimeDetector
 {
+
+    class ScintSD;
+    //  class SiPMSD;
+    //  class PMTSD;
 
     class MainVolStartTimeDetector;
 }
@@ -254,6 +263,14 @@ namespace Cosmic
         // Логические Объемы for SD
 
         G4Cache<GEMSD *> fGEM_SD = nullptr;
+
+        G4Cache<StartTimeDetector::ScintSD *> fScint_SD = nullptr;
+        //  G4Cache<StartTimeDetector::ScintSD*> fTrigCount_SD = nullptr;
+        //  G4Cache<StartTimeDetector::SiPMSD*> fSiPM_SD = nullptr;
+        //   G4Cache<StartTimeDetector::PMTSD*> fLightGuide_SD = nullptr;
+        //    G4Cache<StartTimeDetector::PMTSD*> fPMT_SD = nullptr;
+        //    G4Cache<StartTimeDetector::PMTSD*> fPMT_TRIG_SD = nullptr;
+        //   G4Cache<StartTimeDetector::SiPMSD*> fWLSsipm_SD = nullptr;
 
         G4LogicalVolume *plastic_fat_nsys1LV = nullptr;
         G4LogicalVolume *plastic_fat_nsys2LV_120 = nullptr;

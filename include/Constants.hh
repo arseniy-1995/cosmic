@@ -79,6 +79,15 @@ namespace StartTimeDetector
 
     //  constexpr G4int fNof_plastic_TRIG = 2;
 
+    // пороги записи в файл
+    constexpr G4double plastic_TRIG_threshold = 0.1 * MeV;
+    constexpr G4double plastic_SCINT_threshold = 0.1 * MeV;
+    constexpr G4double PMT_threshold = 1; // число фотонов
+    constexpr G4double WLSsipm_threshold = 1; // число фотонов
+    constexpr G4double SiPM_threshold = 1; // число фотонов
+
+    constexpr G4double DENSITY_LO = 1.032; // scintill. density - for light output calculation
+
 
 #if not(defined(isScinFiveParts) or defined(isScinFivePartsVer2))
     constexpr G4int fNof_plastic_SCINT_START_TIME_DETECTOR = 1;

@@ -1103,82 +1103,84 @@ namespace Cosmic
             // Стартовый счетчик СЦИНТИЛЛЯТОР
 
 
-            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "TrackIDplastic_scint",
+            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "TrackIDplastic_start_time",
                                                  fEventAction->GetTrackIDPlasticSCINT());
 
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Eplastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Eplastic_start_time",
                                                  fEventAction->GetPlasticSCINTEdep());
             // column Id = 4 // Энерговыделение
 
 
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "LOplastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "LOplastic_start_time",
                                                  fEventAction->GetPlasticSCINTLO()); // column Id = 6 // Световыход
 
 
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "A1plastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "A1plastic_start_time",
                                                  fEventAction->GetPlasticSCINTA1());
             // column Id = 8 // Амплутуды с противоположных торцов
 
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "A2plastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "A2plastic_start_time",
                                                  fEventAction->GetPlasticSCINTA2()); // column Id = 10 //
 
 
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "T1plastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "T1plastic_start_time",
                                                  fEventAction->GetPlasticSCINTT1());
             // column Id = 8 // Времена с противоположных торцов
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "T2plastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "T2plastic_start_time",
                                                  fEventAction->GetPlasticSCINTT2());
             // column Id = 10 //
 
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Lplastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Lplastic_start_time",
                                                  fEventAction->GetPlasticSCINTTrackLength());
             // column Id = 8 // Длина пробега
 
 
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "ToFplastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "ToFplastic_start_time",
                                                  fEventAction->GetPlasticSCINTToF());
             // column Id = 10 // TimeOfFlight
 
 
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Xplastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Xplastic_start_time",
                                                  fEventAction->GetPlasticSCINTPos(1));
             // column Id = 4 // Локальная точка
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Yplastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Yplastic_start_time",
                                                  fEventAction->GetPlasticSCINTPos(2)); // column Id = 4 //
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Zplastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Zplastic_start_time",
                                                  fEventAction->GetPlasticSCINTPos(3)); // column Id = 4 //
 
 
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Xglob_plastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Xglob_plastic_start_time",
                                                  fEventAction->GetPlasticSCINTGlobalPos(1));
             // column Id = 4 // Глобальная точка
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Yglob_plastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Yglob_plastic_start_time",
                                                  fEventAction->GetPlasticSCINTGlobalPos(2)); // column Id = 4 //
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Zglob_plastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Zglob_plastic_start_time",
                                                  fEventAction->GetPlasticSCINTGlobalPos(3)); // column Id = 4 //
 
 
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Thetaplastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Thetaplastic_start_time",
                                                  fEventAction->GetPlasticSCINTAngle(1)); // column Id = 4 // Углы
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Phiplastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "Phiplastic_start_time",
                                                  fEventAction->GetPlasticSCINTAngle(2)); // column Id = 4 //
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "ThetaGlobplastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "ThetaGlobplastic_start_time",
                                                  fEventAction->GetPlasticSCINTAngleGlob(1)); // column Id = 4 // Углы
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "PhiGlobplastic_scint",
+            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "PhiGlobplastic_start_time",
                                                  fEventAction->GetPlasticSCINTAngleGlob(2)); // column Id = 4 //
 
-            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "PhotonNumber_plastic_scint",
-                                                 fEventAction->GetPlasticSCINTPhotonNumber());
+            // analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "PhotonNumber_plastic_start_time",
+            //                                      fEventAction->GetPlasticSCINTPhotonNumber());
 
-            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "PhotonNumberScintil_plastic_scint",
-                                                 fEventAction->GetPlasticSCINTPhotonNumberScintil());
+            // analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "PhotonNumberScintil_plastic_start_time",
+            //                                      fEventAction->GetPlasticSCINTPhotonNumberScintil());
+
             // column Id = 4 // Число сцинтил фотонов
-            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "PhotonNumberCherenkov_plastic_scint",
-                                                 fEventAction->GetPlasticSCINTPhotonNumberCherenkov());
+
+            // analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "PhotonNumberCherenkov_plastic_start_time",
+            //                                      fEventAction->GetPlasticSCINTPhotonNumberCherenkov());
             // column Id = 4 // Число Черенковских фотонов
 
-            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "PhotonNumberCherenkov_light_guide",
-                                                 fEventAction->GetLightGuidePhotonNumberCherenkov());
+            // analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "PhotonNumberCherenkov_light_guide",
+            //                                      fEventAction->GetLightGuidePhotonNumberCherenkov());
             // column Id = 4 // Число Черенковских фотонов
 
             // ФЭУ
@@ -1210,47 +1212,52 @@ namespace Cosmic
 
 #endif
 
+            if (0)
+            { // ветки с расчетом фотонов
+
 #if defined(isRUN25) || defined(isFEU187)
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time", fEventAction->GetPMTToF());
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_length", fEventAction->GetPMTLength());
-            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "pmt_nphoton", fEventAction->GetPMTNPhoton());
-            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "pmt_nphoton_scintil",
-                                                 fEventAction->GetPMTNPhotonScintil());
-            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "pmt_nphoton_cherenkov",
-                                                 fEventAction->GetPMTNPhotonCherenkov());
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time1n", fEventAction->GetPMTToFN(1));
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time2n", fEventAction->GetPMTToFN(2));
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time", fEventAction->GetPMTToF());
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_length", fEventAction->GetPMTLength());
+                analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "pmt_nphoton", fEventAction->GetPMTNPhoton());
+                analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "pmt_nphoton_scintil",
+                                                     fEventAction->GetPMTNPhotonScintil());
+                analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "pmt_nphoton_cherenkov",
+                                                     fEventAction->GetPMTNPhotonCherenkov());
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time1n", fEventAction->GetPMTToFN(1));
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time2n", fEventAction->GetPMTToFN(2));
 #if defined(isFEU187_three_svetovod)
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time3n", fEventAction->GetPMTToFN(3));
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time3n", fEventAction->GetPMTToFN(3));
 
 #endif
 
 #if defined(isFEU187_quadro) or defined(isFEU187_quadro_svetovod)
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time3n", fEventAction->GetPMTToFN(3));
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time4n", fEventAction->GetPMTToFN(4));
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time3n", fEventAction->GetPMTToFN(3));
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time4n", fEventAction->GetPMTToFN(4));
 #endif
 
 #if not defined(isFEU187)
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time3n", fEventAction->GetPMTToFN(3));
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time4n", fEventAction->GetPMTToFN(4));
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time5n", fEventAction->GetPMTToFN(5));
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time3n", fEventAction->GetPMTToFN(3));
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time4n", fEventAction->GetPMTToFN(4));
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "pmt_time5n", fEventAction->GetPMTToFN(5));
 #endif
 #endif
 
 #ifdef isWLSFiber
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "wlssipm_time", fEventAction->GetSiPMToF());
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "wlssipm_length", fEventAction->GetSiPMLength());
-            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "wlssipm_nphoton", fEventAction->GetSiPMNPhoton());
-            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "wlssipm_nphoton_scintil",
-                                                 fEventAction->GetSiPMNPhotonScintil());
-            analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "wlssipm_nphoton_cherenkov",
-                                                 fEventAction->GetSiPMNPhotonCherenkov());
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "wlssipm_time1n", fEventAction->GetSiPMToFN(1));
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "wlssipm_time2n", fEventAction->GetSiPMToFN(2));
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "wlssipm_time3n", fEventAction->GetSiPMToFN(3));
-            analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "wlssipm_time4n", fEventAction->GetSiPMToFN(4));
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "wlssipm_time", fEventAction->GetSiPMToF());
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "wlssipm_length", fEventAction->GetSiPMLength());
+                analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "wlssipm_nphoton",
+                                                     fEventAction->GetSiPMNPhoton());
+                analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "wlssipm_nphoton_scintil",
+                                                     fEventAction->GetSiPMNPhotonScintil());
+                analysisManager->CreateNtupleIColumn(fCurrentNtupleId, "wlssipm_nphoton_cherenkov",
+                                                     fEventAction->GetSiPMNPhotonCherenkov());
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "wlssipm_time1n", fEventAction->GetSiPMToFN(1));
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "wlssipm_time2n", fEventAction->GetSiPMToFN(2));
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "wlssipm_time3n", fEventAction->GetSiPMToFN(3));
+                analysisManager->CreateNtupleFColumn(fCurrentNtupleId, "wlssipm_time4n", fEventAction->GetSiPMToFN(4));
 #endif
 
+}
 
 #endif
 
