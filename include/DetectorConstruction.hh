@@ -296,6 +296,8 @@ namespace Cosmic
         G4LogicalVolume *WCTheta2_gas_nsys2LV = nullptr;
         G4LogicalVolume *VCGas_log_nsys2LV = nullptr;
 
+        G4LogicalVolume *ScintStartTimeDetectorLV = nullptr;
+        G4LogicalVolume *GEMLV = nullptr;
 
         MainVolTaggingSystem *fMainVolTaggingSystem = nullptr;
         StartTimeDetector::MainVolStartTimeDetector *fMainVolStartTimeDetector = nullptr;

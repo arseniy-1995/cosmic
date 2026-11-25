@@ -199,7 +199,7 @@ add_executable(cosmic cosmic.cc ${sources} ${headers})
 target_link_libraries(cosmic PUBLIC ROOT::RIO ROOT::Net ROOT::MathCore ${ROOT_LIBRARIES} ${Geant4_LIBRARIES})
 
 include_directories(${PROJECT_SOURCE_DIR}/include/TaggingSystem
-        # ${PROJECT_SOURCE_DIR}/../start_time_detector/include
+        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/
 )
 
 #target_include_directories(cosmic PRIVATE

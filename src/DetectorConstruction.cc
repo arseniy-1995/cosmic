@@ -3367,12 +3367,14 @@ new G4PVPlacement(G4Transform3D(RotateNull,
             StartTimeDetector::ScintSD *scint_start_time_detector_SD =
                 new StartTimeDetector::ScintSD("/scintSD", "scintstarttimedetectorCollection",
                                                StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR);
+            scint_start_time_detector_SD->SetDiscrThres(StartTimeDetector::plastic_SCINT_threshold);
             fScintStartTimeDetector_SD.Put(scint_start_time_detector_SD);
         }
         sdManager->AddNewDetector(fScintStartTimeDetector_SD.Get());
         if (fMainVolStartTimeDetector != nullptr)
         {
-            SetSensitiveDetector(fMainVolStartTimeDetector->GetLogScint(), fScintStartTimeDetector_SD.Get());
+            ScintStartTimeDetectorLV = fMainVolStartTimeDetector->GetLogScint();
+            SetSensitiveDetector(ScintStartTimeDetectorLV, fScintStartTimeDetector_SD.Get());
         }
 
         // LightGuide SD
@@ -3460,7 +3462,8 @@ new G4PVPlacement(G4Transform3D(RotateNull,
         // SetSensitiveDetector(box_GEM_log, fGEM_SD.Get());
         if (fMainVolTaggingSystem != nullptr)
         {
-            SetSensitiveDetector(fMainVolTaggingSystem->GetLogGEMbox(), fGEM_SD.Get());
+            GEMLV = fMainVolTaggingSystem->GetLogGEMbox();
+            SetSensitiveDetector(GEMLV, fGEM_SD.Get());
             // SetSensitiveDetector("PhotonDet_LV", fGEM_SD.Get(), true);
             // box_GEM_log->SetSensitiveDetector(fGEM_SD);
         }
