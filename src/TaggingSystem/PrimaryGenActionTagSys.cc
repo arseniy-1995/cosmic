@@ -57,6 +57,8 @@ namespace Cosmic
     void ClassGeneratorActionTaggSys::GenerateElectronGEM(G4Event *event)
     {
 
+        fParticleGun->SetNumberOfParticles(1);
+
         G4double xx_cell = 0.0, yy_cell = 0.0, zz_cell = 0.0;
 
         G4ThreeVector initial_pos(0.0, 0.0, 0.0);

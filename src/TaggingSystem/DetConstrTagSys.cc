@@ -136,11 +136,11 @@ namespace Cosmic
         G4ThreeVector world_rot_pos = G4ThreeVector(0., 0., 0.);
 
 
-#ifndef isGenElectronGEM
+#ifndef TAGG_SYS
         size_world_rot = G4ThreeVector(0.15 * m, 0.1 * m, 0.3 * m);
 #endif
 
-#ifndef isGenElectronGEM
+#ifndef TAGG_SYS
         world_rot_pos = G4ThreeVector(0.0 * m, 0.0 * m, 0.0 * m);
         // world_rot_pos = G4ThreeVector( -0.2 * m, -0.2 * m, 0.0 * m);
 #endif

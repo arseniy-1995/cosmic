@@ -75,6 +75,8 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/src/EcoMug/*.h)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/TaggingSystem/*.hh
         #  ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/*.hh
         ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/MainVolStartTimeDetector.hh
+        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/ScintSD.hh
+        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/ScintHit.hh
         #${PROJECT_SOURCE_DIR}/../start_time_detector/include/*.hh
         #  ${PROJECT_SOURCE_DIR}/../start_time_detector/include/Constants.hh
 )

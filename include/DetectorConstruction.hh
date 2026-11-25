@@ -264,7 +264,7 @@ namespace Cosmic
 
         G4Cache<GEMSD *> fGEM_SD = nullptr;
 
-        G4Cache<StartTimeDetector::ScintSD *> fScint_SD = nullptr;
+        G4Cache<StartTimeDetector::ScintSD *> fScintStartTimeDetector_SD = nullptr;
         //  G4Cache<StartTimeDetector::ScintSD*> fTrigCount_SD = nullptr;
         //  G4Cache<StartTimeDetector::SiPMSD*> fSiPM_SD = nullptr;
         //   G4Cache<StartTimeDetector::PMTSD*> fLightGuide_SD = nullptr;

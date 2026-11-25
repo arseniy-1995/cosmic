@@ -86,7 +86,7 @@ namespace Cosmic
         // DetectorConstruction* Detector;
         // G4int*                   HitID;
 
-        G4double discr_threshold = 0.1 * MeV;
+        G4double discr_threshold = 0.1 * keV;
     };
 
 

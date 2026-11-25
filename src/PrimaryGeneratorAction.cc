@@ -287,9 +287,21 @@ namespace Cosmic {
 
 #ifdef isGenElectronGEM
 
-            // GenerateElectronGEM(anEvent);
+            //  GenerateElectronGEM(anEvent);
+
             fGeneratorActionTaggSys->GenerateElectronGEM(anEvent);
-            fParticleGun = fGeneratorActionTaggSys->GetParticleGun();
+            fParticleGun = (fGeneratorActionTaggSys->GetParticleGun());
+            fParticleGun->GeneratePrimaryVertex(anEvent);
+
+            // G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
+            // G4ParticleDefinition *particle = particleTable->FindParticle("mu-");
+            // fParticleGun->SetParticleDefinition(particle);
+            // fParticleGun->SetParticleEnergy(2000 * MeV);
+            // fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0.));
+            //     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.1, 0., 1.));
+            // fParticleGun->GeneratePrimaryVertex(anEvent);
+
+            // GenerateProton(anEvent);
 
 #endif
             //  GenerateNeutron(anEvent);

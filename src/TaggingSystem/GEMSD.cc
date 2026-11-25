@@ -124,7 +124,11 @@ namespace Cosmic
         // energy deposit
         auto edep = aStep->GetTotalEnergyDeposit();
         if (edep == 0.)
-            return true;
+        {
+            // G4cerr << "!!!" << G4endl;
+            // return true;
+        }
+
 
         G4Track *aTrack = aStep->GetTrack();
         auto preStepPoint = aStep->GetPreStepPoint();

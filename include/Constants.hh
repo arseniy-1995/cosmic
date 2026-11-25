@@ -35,7 +35,7 @@
 #include "G4PhysicalConstants.hh"
 
 // #include <iostream>
-#define isGenElectronGEM
+// #define isGenElectronGEM
 
 namespace StartTimeDetector
 {
@@ -154,7 +154,7 @@ namespace StartTimeDetector
 
 namespace Cosmic {
 
-    // #define isGenCosmic
+// #define isGenCosmic
 
     // #define isGenLQ
     // #define isTrigLQ
@@ -164,9 +164,11 @@ namespace Cosmic {
 
 #define isGenElectronGEM
 
-#define isTrigPN
+// #define isTrigPN
+#define isTrigGEM
+    // #define isTrigCosmic
 
-// #define isTrig_accept_all
+    // #define isTrig_accept_all
 
     constexpr G4int T2M_zanulenie[3] = {1, 1, 1}; // если 1, то зануления нет, 0 - зануление есть T20, T21, T22
 
@@ -320,7 +322,7 @@ namespace Cosmic {
     constexpr G4double plastic_thin_threshold = 0.1 * MeV;
     constexpr G4double plastic_LQ_threshold = 0.1 * MeV;
     constexpr G4double HadronCalorimeter_threshold = 1.0 * MeV;
-    constexpr G4double GEM_threshold_TDC = 0.1 * keV;
+
     //   constexpr G4double WChamber_threshold = 0.5 * keV;
     //   constexpr G4double VChamber_threshold = 0.5 * keV;
 

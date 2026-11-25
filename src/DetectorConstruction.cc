@@ -3361,17 +3361,19 @@ new G4PVPlacement(G4Transform3D(RotateNull,
 
         // Scint Start Time Detector SD
 
-        if (!fScint_SD.Get())
+        if (!fScintStartTimeDetector_SD.Get())
         {
             G4cout << "Construction /scintSD" << G4endl;
-            StartTimeDetector::ScintSD *scint_SD =
+            StartTimeDetector::ScintSD *scint_start_time_detector_SD =
                 new StartTimeDetector::ScintSD("/scintSD", "scintstarttimedetectorCollection",
                                                StartTimeDetector::fNof_plastic_SCINT_START_TIME_DETECTOR);
-            fScint_SD.Put(scint_SD);
+            fScintStartTimeDetector_SD.Put(scint_start_time_detector_SD);
         }
-        sdManager->AddNewDetector(fScint_SD.Get());
-        SetSensitiveDetector(fMainVolStartTimeDetector->GetLogScint(), fScint_SD.Get());
-
+        sdManager->AddNewDetector(fScintStartTimeDetector_SD.Get());
+        if (fMainVolStartTimeDetector != nullptr)
+        {
+            SetSensitiveDetector(fMainVolStartTimeDetector->GetLogScint(), fScintStartTimeDetector_SD.Get());
+        }
 
         // LightGuide SD
 
