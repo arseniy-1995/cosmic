@@ -113,7 +113,7 @@ namespace Cosmic
 
         G4VisAttributes *housing_va = new G4VisAttributes(G4Colour(0.8, 0.8, 0.8));
         fHousing_log->SetVisAttributes(housing_va);
-        // fHousing_log->SetVisAttributes(G4VisAttributes::GetInvisible());
+        fHousing_log->SetVisAttributes(G4VisAttributes::GetInvisible());
 
         // fConstructor->fHousing_log = fHousing_log;
         //  fConstructor->fHousing_phys = fHousing_phys;
