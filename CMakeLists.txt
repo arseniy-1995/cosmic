@@ -200,6 +200,7 @@ target_link_libraries(cosmic PUBLIC ROOT::RIO ROOT::Net ROOT::MathCore ${ROOT_LI
 
 include_directories(${PROJECT_SOURCE_DIR}/include/TaggingSystem
         ${PROJECT_SOURCE_DIR}/../start_time_detector/include/
+        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector
 )
 
 #target_include_directories(cosmic PRIVATE

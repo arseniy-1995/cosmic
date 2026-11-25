@@ -281,7 +281,12 @@ namespace Cosmic {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-    void EventAction::BeginOfEventAction(const G4Event * /*event*/) {
+    void EventAction::BeginOfEventAction(const G4Event *event)
+    {
+
+        fEventID = event->GetEventID();
+        // G4cerr << "EventID = " << anEvent->GetEventID() << G4endl;
+
 
         // Find hit collections and histogram Ids by names (just once)
         // and save them in the data members of this class
@@ -389,6 +394,7 @@ namespace Cosmic {
         //     flaq_is_trig_tof_TRIG[i] = true;
         //     flaq_is_trig_tof_TRIG_and_PMT[i] = true;
         // }
+
         for (int i = 0; i <= 1; i++)
         {
             flaq_is_trig_tof_SCINT_START_TIME_DETECTOR[i] = true;
@@ -3418,7 +3424,7 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
 #endif
 
 #if defined(isTrigGEM) and not defined(isTrigPN)
-                        if (1 && (de_GEM_dep[0] == 1) || de_OpticalScintStartTimeDetector_dep[0] == 1)
+                        if (1 and ((de_GEM_dep[0] == 1) or de_OpticalScintStartTimeDetector_dep[0] == 1))
                         {
                             //  if (1 && (hcdep[0] == 3 && hcdep[1] == 3)){
 
@@ -3433,6 +3439,14 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
 
                         // Это без триггера, все. Если нет тригера по энергии, то пишется нулями
                         // analysisManager->AddNtupleRow(0);
+                    }
+
+
+                    if (analysisManager)
+                    {
+
+                        G4cout << "Taken 2 !" << G4endl;
+                        analysisManager->AddNtupleRow(0);
                     }
 
 

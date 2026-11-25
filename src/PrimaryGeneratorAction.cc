@@ -287,6 +287,8 @@ namespace Cosmic {
 
 #ifdef isGenElectronGEM
 
+            // GenerateCosmicEcoMug(anEvent);
+
             //  GenerateElectronGEM(anEvent);
 
             fGeneratorActionTaggSys->GenerateElectronGEM(anEvent);

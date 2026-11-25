@@ -961,6 +961,7 @@ namespace Cosmic {
         // SetLogicalVolume(fHousing_log);
         fMainVolTaggingSystem->SetLogVol();
 
+        fHousingTaggSys_log = fMainVolTaggingSystem->GetHousingVolume();
 
 
 #endif
@@ -983,11 +984,20 @@ namespace Cosmic {
                           L0_GEM + D_GEM + Z1_GEM + L_GEM + 2.0 * fScintilStartTimeDetector_y + 12. * mm);
 
         // auto DetConstrStartTimeDet = new StartTimeDetector::DetectorConstruction();
+
+        G4LogicalVolume *vol_for_place_start_time_detector = fWorldLV;
+
+#ifdef TAGG_SYS
+        vol_for_place_start_time_detector = fHousingTaggSys_log;
+#endif
+
         fMainVolStartTimeDetector = new StartTimeDetector::MainVolStartTimeDetector(
-            rot_main_vol_start_time_detector, pos_main_vol_start_time_detector, fWorldLV, false, 0, nullptr,
-            fScintilStartTimeDetector_x, fScintilStartTimeDetector_y, fScintilStartTimeDetector_z);
+            rot_main_vol_start_time_detector, pos_main_vol_start_time_detector, vol_for_place_start_time_detector,
+            false, 0, nullptr, fScintilStartTimeDetector_x, fScintilStartTimeDetector_y, fScintilStartTimeDetector_z);
         // SetLogicalVolume(fHousing_log);
         fMainVolStartTimeDetector->SetLogVol();
+
+        fHousingStartTimeDetector_log = fMainVolStartTimeDetector->GetHousingVolume();
 
 #endif
 

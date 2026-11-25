@@ -301,6 +301,9 @@ namespace Cosmic
 
         MainVolTaggingSystem *fMainVolTaggingSystem = nullptr;
         StartTimeDetector::MainVolStartTimeDetector *fMainVolStartTimeDetector = nullptr;
+
+        G4LogicalVolume *fHousingTaggSys_log = nullptr;
+        G4LogicalVolume *fHousingStartTimeDetector_log = nullptr;
 };
 
 }

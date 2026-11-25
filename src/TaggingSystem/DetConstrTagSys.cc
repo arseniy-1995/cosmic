@@ -90,7 +90,7 @@ namespace Cosmic
         G4PVPlacement(pRot, tlate,
                       // Temp logical volume must be created here
                       new G4LogicalVolume(new G4Box("temp", 1, 1, 1), G4Material::GetMaterial("Air"), "temp", 0, 0, 0),
-                      "housing", pMotherLogical, pMany, pCopyNo, fCheckOverlaps = true
+                      "housing_tagg_sys", pMotherLogical, pMany, pCopyNo, fCheckOverlaps = true
                       // , fConstructor(c)
         )
     {
@@ -113,7 +113,7 @@ namespace Cosmic
 
         G4VisAttributes *housing_va = new G4VisAttributes(G4Colour(0.8, 0.8, 0.8));
         fHousing_log->SetVisAttributes(housing_va);
-        fHousing_log->SetVisAttributes(G4VisAttributes::GetInvisible());
+        // fHousing_log->SetVisAttributes(G4VisAttributes::GetInvisible());
 
         // fConstructor->fHousing_log = fHousing_log;
         //  fConstructor->fHousing_phys = fHousing_phys;
@@ -156,9 +156,11 @@ namespace Cosmic
 
         fWorldLV_rot->SetVisAttributes(G4VisAttributes::GetInvisible());
 
+#ifdef TAGG_SYS
         auto worldPV_rot = new G4PVPlacement(rot_for_world_target, world_rot_pos, fWorldLV_rot, "World_rot", fWorldLV,
                                              false, fCheckOverlaps);
 
+#endif
         ///
 #ifdef TARGET
         ConstructTarget();

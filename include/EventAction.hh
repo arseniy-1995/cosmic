@@ -1243,6 +1243,8 @@ namespace Cosmic {
 
 
     private:
+        G4int fEventID = 0;
+
         GEMHitsCollection *GetHitsCollection_GEM(G4int hcID, const G4Event *event) const;
 
         StartTimeDetector::ScintHitsCollection *GetHitsCollection_Scint(G4int hcID, const G4Event *event) const;
