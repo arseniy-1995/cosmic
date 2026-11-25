@@ -945,6 +945,8 @@ namespace Cosmic {
                 fCheckOverlaps);  // checking overlaps
 
 
+#ifdef TAGG_SYS
+
         G4ThreeVector pos_main_vol_tagging_system = G4ThreeVector(0, 0, 0);
         G4RotationMatrix *rot_main_vol_tagging_system = new G4RotationMatrix();
 
@@ -959,10 +961,14 @@ namespace Cosmic {
         // SetLogicalVolume(fHousing_log);
         fMainVolTaggingSystem->SetLogVol();
 
+
+
+#endif
+
+#ifdef START_TIME_DETECTOR
+
         G4ThreeVector pos_main_vol_start_time_detector = G4ThreeVector(0, 0, 0);
         G4RotationMatrix *rot_main_vol_start_time_detector = new G4RotationMatrix();
-
-#ifdef isGenElectronGEM
 
         G4double fScintilStartTimeDetector_z = 22.0 * cm / 2;
         G4double fScintilStartTimeDetector_y = 2.0 * cm / 2;
@@ -976,14 +982,14 @@ namespace Cosmic {
             G4ThreeVector((X30_GEM + fScintilStartTimeDetector_z - 1.5 * cm + 0.5 * cm - 2.0 * cm + 1.2 * cm), 0,
                           L0_GEM + D_GEM + Z1_GEM + L_GEM + 2.0 * fScintilStartTimeDetector_y + 12. * mm);
 
-#endif
-
         // auto DetConstrStartTimeDet = new StartTimeDetector::DetectorConstruction();
         fMainVolStartTimeDetector = new StartTimeDetector::MainVolStartTimeDetector(
             rot_main_vol_start_time_detector, pos_main_vol_start_time_detector, fWorldLV, false, 0, nullptr,
             fScintilStartTimeDetector_x, fScintilStartTimeDetector_y, fScintilStartTimeDetector_z);
         // SetLogicalVolume(fHousing_log);
         fMainVolStartTimeDetector->SetLogVol();
+
+#endif
 
         // Plastics
 

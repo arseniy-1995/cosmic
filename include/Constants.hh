@@ -131,9 +131,11 @@ namespace Cosmic {
 #define FOIL
 #define VACUUM_TUBE
 
+#define TAGG_SYS
 
 #define MAGNET_D2
 #define GEM
+#define START_TIME_DETECTOR
 
     // дипольные магниты
 #define MAGNET_D1
