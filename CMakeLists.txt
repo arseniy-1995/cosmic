@@ -73,18 +73,26 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/src/EcoMug/*.h)
 
 
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/TaggingSystem/*.hh
-        #  ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/*.hh
-        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/MainVolStartTimeDetector.hh
-        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/ScintSD.hh
-        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/ScintHit.hh
+        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/*.hh
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/MainVolStartTimeDetector.hh
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/ScintSD.hh
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/ScintHit.hh
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/PMTSD.hh
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/PMTHit.hh
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/SiPMSD.hh
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/include/StartTimeDetector/SiPMHit.hh
         #${PROJECT_SOURCE_DIR}/../start_time_detector/include/*.hh
         #  ${PROJECT_SOURCE_DIR}/../start_time_detector/include/Constants.hh
 )
 file(GLOB headers ${PROJECT_SOURCE_DIR}/src/TaggingSystem/*.cc
-        # ${PROJECT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector/*.cc
-        ${PROJECT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector/MainVolStartTimeDetector.cc
-        ${PROJECT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector/ScintSD.cc
-        ${PROJECT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector/ScintHit.cc
+        ${PROJECT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector/*.cc
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector/MainVolStartTimeDetector.cc
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector/ScintSD.cc
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector/ScintHit.cc
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector/PMTSD.cc
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector/PMTHit.cc
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector/SiPMSD.cc
+        #        ${PROJECT_SOURCE_DIR}/../start_time_detector/src/StartTimeDetector/SiPMHit.cc
         #   ${PROJECT_SOURCE_DIR}/../start_time_detector/src/DetectorConstruction.cc
 )
 

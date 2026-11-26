@@ -800,6 +800,35 @@ namespace Cosmic {
 
         BlackPaper->SetMaterialPropertiesTable(BlackPaperMPT);
 
+        // SiPM
+
+        //----------------------------------------------------
+        // Define SiPM material
+        //----------------------------------------------------
+
+        // Silicon
+        Silicon = nistManager->FindOrBuildMaterial("G4_Si");
+        Silicon->SetName("Silicon");
+
+        // Silicon = new G4Material("Silicon", 14, a = 28.10 * g / mole, density = 19.3 * g / cm3);
+
+        std::vector<G4double> SiRefractionIndex = {3.97, 3.97, 3.97, 3.97, 3.97, 3.97, 3.97, 3.97, 3.97, 3.97};
+
+        std::vector<G4double> SiAbsorptionLength = {0.01 * mm, 0.01 * mm, 0.01 * mm, 0.01 * mm, 0.01 * mm,
+                                                    0.01 * mm, 0.01 * mm, 0.01 * mm, 0.01 * mm, 0.01 * mm};
+
+        std::vector<G4double> SiReflectivity = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
+
+        std::vector<G4double> SiEfficiency = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+        G4MaterialPropertiesTable *siMPT = new G4MaterialPropertiesTable();
+
+        siMPT->AddProperty("RINDEX", photonEnergy, SiRefractionIndex);
+        siMPT->AddProperty("ABSLENGTH", photonEnergy, SiAbsorptionLength);
+        siMPT->AddProperty("REFLECTIVITY", photonEnergy, SiReflectivity);
+        siMPT->AddProperty("EFFICIENCY", photonEnergy, SiEfficiency);
+        Silicon->SetMaterialPropertiesTable(siMPT);
+
 
         // Print materials
         G4cout << *(G4Material::GetMaterialTable()) << G4endl;
@@ -2968,7 +2997,8 @@ new G4PVPlacement(G4Transform3D(RotateNull,
         auto ScintilMaterial = G4Material::GetMaterial("Scintillator");
         auto AirMaterial = G4Material::GetMaterial("Air");
         auto MylarMaterial = G4Material::GetMaterial("Mylar");
-        auto WoodMaterial = G4Material::GetMaterial("G4_CELLULOSE_CELLOPHANE");
+        // auto WoodMaterial = G4Material::GetMaterial("G4_CELLULOSE_CELLOPHANE");
+        auto WoodMaterial = (G4NistManager::Instance())->FindOrBuildMaterial("G4_CELLULOSE_CELLOPHANE");
         auto ConvertorLQMaterial = G4Material::GetMaterial("G4_Pb");
 
 
@@ -3386,72 +3416,188 @@ new G4PVPlacement(G4Transform3D(RotateNull,
             SetSensitiveDetector(ScintStartTimeDetectorLV, fScintStartTimeDetector_SD.Get());
         }
 
+
+#if defined(isRUN23) || defined(isRUN21)
+
+        // SiPMs SD
+
+        SiPMSD *sipm = fSiPM_SD.Get();
+        if (!sipm)
+        {
+            // Created here so it exists as pmts are being placed
+            G4cout << "Construction /SiPMSD" << G4endl;
+            SiPMSD *sipm_SD = new SiPMSD("/SiPMSD", "sipmHitCollection", fNof_SiPM);
+            fSiPM_SD.Put(sipm_SD);
+
+            sipm_SD->InitSiPMs();
+            sipm_SD->SetSiPMPositions(fMainVolume->GetSiPMPositions());
+        }
+        else
+        {
+            sipm->InitSiPMs();
+            sipm->SetSiPMPositions(fMainVolume->GetSiPMPositions());
+        }
+        sdManager->AddNewDetector(fSiPM_SD.Get());
+
+        //
+
+        // sensitive detector is not actually on the photocathode.
+        // processHits gets done manually by the stepping action.
+        // It is used to detect when photons hit and get absorbed & detected at the
+        // boundary to the photocathode (which doesn't get done by attaching it to a
+        // logical volume.
+        // It does however need to be attached to something or else it doesn't get
+        // reset at the begining of events
+
+
+        SetSensitiveDetector(fMainVolume->GetLogSiPM2(), fSiPM_SD.Get());
+        SetSensitiveDetector(fMainVolume->GetLogSiPM1(), fSiPM_SD.Get());
+
+#endif
+
+
+#if defined(isRUN25) || defined(isFEU187)
+
+        // PMT SD
+
+        StartTimeDetector::PMTSD *pmt = fPMT_SD.Get();
+        if (!pmt)
+        {
+            // Created here so it exists as pmts are being placed
+            G4cout << "Construction /pmtSD" << G4endl;
+            StartTimeDetector::PMTSD *pmt_SD = new StartTimeDetector::PMTSD(
+                "/pmtSD", "pmtHitCollection", StartTimeDetector::fNof_PMT_START_TIME_DETECTOR);
+            fPMT_SD.Put(pmt_SD);
+
+            // pmt_SD->InitPMT();
+            // pmt_SD->SetPMTPositions(fMainVolStartTimeDetector->GetPMTPositions());
+        }
+        else
+        {
+            //   pmt->InitPMT();
+            //  pmt->SetPMTPositions(fMainVolStartTimeDetector->GetPMTPositions());
+        }
+        sdManager->AddNewDetector(fPMT_SD.Get());
+
+        //
+
+        // sensitive detector is not actually on the photocathode.
+        // processHits gets done manually by the stepping action.
+        // It is used to detect when photons hit and get absorbed & detected at the
+        // boundary to the photocathode (which doesn't get done by attaching it to a
+        // logical volume.
+        // It does however need to be attached to something or else it doesn't get
+        // reset at the begining of events
+
+
+        // SetSensitiveDetector(fMainVolStartTimeDetector->GetLogPhotoCath(), fPMT_SD.Get());
+
+        // SetSensitiveDetector("photocath_log", fPMT_SD.Get(),true);
+        //  SetSensitiveDetector("PhotonDet_LV", fPMT_SD.Get(), true); // , true
+
+
+#endif
+
+
         // LightGuide SD
 
-        // if(!fLightGuide_SD.Get())
-        // {
-        //     G4cout << "Construction /light_guideSD" << G4endl;
-        //     StartTimeDetector::PMTSD * light_guide_SD = new
-        //     StartTimeDetector::PMTSD("/light_guideSD","light_guideCollection",
-        //     StartTimeDetector::fNof_PMT_START_TIME_DETECTOR); fLightGuide_SD.Put(light_guide_SD);
-        // }
-        // sdManager->AddNewDetector(fLightGuide_SD.Get());
+        if (!fLightGuide_SD.Get())
+        {
+            G4cout << "Construction /light_guideSD" << G4endl;
+            StartTimeDetector::PMTSD *light_guide_SD = new StartTimeDetector::PMTSD(
+                "/light_guideSD", "light_guideCollection", StartTimeDetector::fNof_PMT_START_TIME_DETECTOR);
+            fLightGuide_SD.Put(light_guide_SD);
+        }
+        sdManager->AddNewDetector(fLightGuide_SD.Get());
         // SetSensitiveDetector(fMainVolume->GetLogLightGuide(), fLightGuide_SD.Get()); // TODO зависает
 
         // TrigCount SD
 
-        // #ifdef TRIGCOUNT
-        //         if(!fTrigCount_SD.Get())
-        //         {
-        //             G4cout << "Construction /trigcountSD" << G4endl;
-        //             ScintSD* trigcount_SD = new ScintSD("/trigcountSD","trigcountCollection", fNof_plastic_TRIG);
-        //             //trigcount_SD->SetDiscrThres(0.1*MeV);
-        //             fTrigCount_SD.Put(trigcount_SD);
-        //         }
-        //         sdManager->AddNewDetector(fTrigCount_SD.Get());
-        //         SetSensitiveDetector(TrigCount_log, fTrigCount_SD.Get());
-        //         // SetSensitiveDetector("PhotonDet_LV", fTrigCount_SD.Get(), true);
+#ifdef TRIGCOUNT
+        if (!fTrigCount_SD.Get())
+        {
+            G4cout << "Construction /trigcountSD" << G4endl;
+            ScintSD *trigcount_SD = new ScintSD("/trigcountSD", "trigcountCollection", fNof_plastic_TRIG);
+            // trigcount_SD->SetDiscrThres(0.1*MeV);
+            fTrigCount_SD.Put(trigcount_SD);
+        }
+        sdManager->AddNewDetector(fTrigCount_SD.Get());
+        SetSensitiveDetector(TrigCount_log, fTrigCount_SD.Get());
+        // SetSensitiveDetector("PhotonDet_LV", fTrigCount_SD.Get(), true);
+
+#endif
+
+#ifdef TRIGCOUNTsmall_MCP_PMT_BC_422
+
+        // PMT TRIG SD
+
+        PMTSD *pmt_trig = fPMT_TRIG_SD.Get();
+        if (!pmt_trig)
+        {
+            // Created here so it exists as pmts are being placed
+            G4cout << "Construction /pmttrigSD" << G4endl;
+            PMTSD *pmt_trig_SD = new PMTSD("/pmttrigSD", "pmttrigHitCollection", fNof_plastic_TRIG);
+            fPMT_TRIG_SD.Put(pmt_trig_SD);
+
+            pmt_trig_SD->InitPMT();
+            // pmt_trig_SD->SetPMTPositions(fMainVolume->GetPMTPositions());
+        }
+        else
+        {
+            pmt_trig->InitPMT();
+            // pmt_trig->SetPMTPositions(fMainVolume->GetPMTPositions());
+        }
+        sdManager->AddNewDetector(fPMT_TRIG_SD.Get());
+
         //
-        // #endif
-        //
-        // #ifdef TRIGCOUNTsmall_MCP_PMT_BC_422
-        //
-        //         // PMT TRIG SD
-        //
-        //         PMTSD* pmt_trig = fPMT_TRIG_SD.Get();
-        //         if(!pmt_trig)
-        //         {
-        //             // Created here so it exists as pmts are being placed
-        //             G4cout << "Construction /pmttrigSD" << G4endl;
-        //             PMTSD* pmt_trig_SD = new PMTSD("/pmttrigSD","pmttrigHitCollection", fNof_plastic_TRIG);
-        //             fPMT_TRIG_SD.Put(pmt_trig_SD);
-        //
-        //             pmt_trig_SD->InitPMT();
-        //             // pmt_trig_SD->SetPMTPositions(fMainVolume->GetPMTPositions());
-        //         }
-        //         else
-        //         {
-        //             pmt_trig->InitPMT();
-        //             //pmt_trig->SetPMTPositions(fMainVolume->GetPMTPositions());
-        //         }
-        //         sdManager->AddNewDetector(fPMT_TRIG_SD.Get());
-        //
-        //         //
-        //
-        //         // sensitive detector is not actually on the photocathode.
-        //         // processHits gets done manually by the stepping action.
-        //         // It is used to detect when photons hit and get absorbed & detected at the
-        //         // boundary to the photocathode (which doesn't get done by attaching it to a
-        //         // logical volume.
-        //         // It does however need to be attached to something or else it doesn't get
-        //         // reset at the begining of events
-        //
-        //
-        //         SetSensitiveDetector(fPhotocath_for_trig_log, fPMT_TRIG_SD.Get());
-        //         // SetSensitiveDetector("photocath_log", fPMT_TRIG_SD.Get(),true);
-        //         //  SetSensitiveDetector("PhotonDet_LV", fPMT_TRIG_SD.Get(), true); // , true
-        //
-        // #endif
+
+        // sensitive detector is not actually on the photocathode.
+        // processHits gets done manually by the stepping action.
+        // It is used to detect when photons hit and get absorbed & detected at the
+        // boundary to the photocathode (which doesn't get done by attaching it to a
+        // logical volume.
+        // It does however need to be attached to something or else it doesn't get
+        // reset at the begining of events
+
+
+        SetSensitiveDetector(fPhotocath_for_trig_log, fPMT_TRIG_SD.Get());
+        // SetSensitiveDetector("photocath_log", fPMT_TRIG_SD.Get(),true);
+        //  SetSensitiveDetector("PhotonDet_LV", fPMT_TRIG_SD.Get(), true); // , true
+
+#endif
+
+
+#ifdef isWLSFiber
+
+        SiPMSD *sipm = fWLSsipm_SD.Get();
+        if (!sipm)
+        {
+            // Created here so it exists as pmts are being placed
+            G4cout << "Construction WLS/SiPMSD" << G4endl;
+            // G4String mppcSDName = "/WLS/SiPMSD";
+            G4String mppcSDName = "/WLS/SiPMSD"; // mppcSDName
+            SiPMSD *WLSsipm_SD =
+                new SiPMSD("/WLSSiPMSD", "WLSsipmHitCollection", fNof_SiPM); // "/WLSSiPMSD", "WLSsipmHitCollection"
+
+            fWLSsipm_SD.Put(WLSsipm_SD);
+
+            WLSsipm_SD->InitSiPMs();
+            //  WLSsipm_SD->SetSiPMPositions(fMainVolume->GetPMTPositions());
+        }
+        else
+        {
+            sipm->InitSiPMs();
+            // sipm->SetSiPMPositions(fMainVolume->GetPMTPositions());
+        }
+        sdManager->AddNewDetector(fWLSsipm_SD.Get());
+        // SetSensitiveDetector(logicPhotonDetSiPM, fWLSsipm_SD.Get());
+        SetSensitiveDetector("PhotonDet_LV", fWLSsipm_SD.Get(), true); // , true
+        // SetSensitiveDetector(fMainVolume->GetLogScint(), fWLSsipm_SD.Get());
+        //  SetSensitiveDetector(TrigCount_log, fWLSsipm_SD.Get());
+
+        // logicPhotonDet->SetSensitiveDetector(fWLSsipmSD.Get());
+
+#endif
 
 
 #endif

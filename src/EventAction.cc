@@ -470,23 +470,23 @@ namespace Cosmic {
         if (fScintStartTimeDetectorCollID == -1)
             fScintStartTimeDetectorCollID = SDman->GetCollectionID("scintstdCollection");
 
-        // #if defined(isRUN23) || defined(isRUN21)
-        //         if (fSiPMCollID < 0)
-        //             fSiPMCollID = SDman->GetCollectionID("sipmHitCollection");
-        // #endif
-        //
-        // #if defined(isRUN25) || defined(isFEU187)
-        //         // if (fPMTCollID < 0)
-        //         //     fPMTCollID = SDman->GetCollectionID("pmtHitCollection");
-        //
-        //         // if (fLightGuideCollID < 0)
-        //         //     fLightGuideCollID = SDman->GetCollectionID("light_guideCollection");
-        // #endif
-        //
-        // #ifdef isWLSFiber
-        //         if (fWLSsipmCollID < 0)
-        //             fWLSsipmCollID = SDman->GetCollectionID("WLSsipmHitCollection"); // "WLSsipmHitCollection"
-        // #endif
+#if defined(isRUN23) || defined(isRUN21)
+        if (fSiPMCollID < 0)
+            fSiPMCollID = SDman->GetCollectionID("sipmHitCollection");
+#endif
+
+#if defined(isRUN25) || defined(isFEU187)
+        if (fPMTCollID < 0)
+            fPMTCollID = SDman->GetCollectionID("pmtHitCollection");
+
+        if (fLightGuideCollID < 0)
+            fLightGuideCollID = SDman->GetCollectionID("light_guideCollection");
+#endif
+
+#ifdef isWLSFiber
+        if (fWLSsipmCollID < 0)
+            fWLSsipmCollID = SDman->GetCollectionID("WLSsipmHitCollection"); // "WLSsipmHitCollection"
+#endif
 
 #endif
     }
@@ -600,7 +600,11 @@ namespace Cosmic {
         // EventInfo* event_info =(EventInfo*)event->GetUserInformation();
 
 
-        if (event_info == NULL) return;
+        if (event_info == NULL)
+        {
+            G4cerr << "event_info = NULL" << G4endl;
+            return;
+        }
 
 
         G4int number_vertex = event->GetNumberOfPrimaryVertex();
@@ -827,13 +831,14 @@ namespace Cosmic {
 #endif
 
 
-        // #ifdef TRIGCOUNT
-        //         auto plastic_TRIG_HC = GetHitsCollection_Scint(fTrigCountCollID, anEvent);
-        //         if (!plastic_TRIG_HC) return;
-        //         ScintHit *plastic_TRIG_Hit[fNof_plastic_TRIG + 1];
-        //         plastic_TRIG_Hit[0] = (*plastic_TRIG_HC)[plastic_TRIG_HC->entries() - 1];
-        //
-        // #endif
+#ifdef TRIGCOUNT
+        auto plastic_TRIG_HC = GetHitsCollection_Scint(fTrigCountCollID, anEvent);
+        if (!plastic_TRIG_HC)
+            return;
+        ScintHit *plastic_TRIG_Hit[fNof_plastic_TRIG + 1];
+        plastic_TRIG_Hit[0] = (*plastic_TRIG_HC)[plastic_TRIG_HC->entries() - 1];
+
+#endif
 
 
 #ifdef START_TIME_DETECTOR
@@ -848,42 +853,43 @@ namespace Cosmic {
 
 
 #if defined(isRUN25) || defined(isFEU187)
-        // auto PMT_HC = GetHitsCollection_PMT(fPMTCollID, event);
-        // if (!PMT_HC)
-        //     return;
-        // StartTimeDetector::PMTHit *PMT_Hit[StartTimeDetector::fNof_PMT_START_TIME_DETECTOR + 1];
-        // PMT_Hit[0] = (*PMT_HC)[PMT_HC->entries() - 1];
-        //
-        // auto light_guide_HC = GetHitsCollection_PMT(fLightGuideCollID, event);
-        // if (!light_guide_HC)
-        //     return;
-        // StartTimeDetector::PMTHit *light_guide_Hit[StartTimeDetector::fNof_PMT_START_TIME_DETECTOR + 1];
-        // light_guide_Hit[0] = (*light_guide_HC)[light_guide_HC->entries() - 1];
+        auto PMT_HC = GetHitsCollection_PMT(fPMTCollID, event);
+        if (!PMT_HC)
+            return;
+        StartTimeDetector::PMTHit *PMT_Hit[StartTimeDetector::fNof_PMT_START_TIME_DETECTOR + 1];
+        PMT_Hit[0] = (*PMT_HC)[PMT_HC->entries() - 1];
+
+        auto light_guide_HC = GetHitsCollection_PMT(fLightGuideCollID, event);
+        if (!light_guide_HC)
+            return;
+        StartTimeDetector::PMTHit *light_guide_Hit[StartTimeDetector::fNof_PMT_START_TIME_DETECTOR + 1];
+        light_guide_Hit[0] = (*light_guide_HC)[light_guide_HC->entries() - 1];
 #endif
 
-        // #ifdef TRIGCOUNTsmall_MCP_PMT_BC_422
-        //
-        //         auto PMT_TRIG_HC = GetHitsCollection_PMT_TRIG(fTrigCount_and_PMTCollID, anEvent);
-        //         if (!PMT_TRIG_HC) return;
-        //         PMTHit *PMT_TRIG_Hit[fNof_plastic_TRIG + 1];
-        //         PMT_TRIG_Hit[0] = (*PMT_TRIG_HC)[PMT_TRIG_HC->entries() - 1];
-        //
-        // #endif
+#ifdef TRIGCOUNTsmall_MCP_PMT_BC_422
+
+        auto PMT_TRIG_HC = GetHitsCollection_PMT_TRIG(fTrigCount_and_PMTCollID, anEvent);
+        if (!PMT_TRIG_HC)
+            return;
+        PMTHit *PMT_TRIG_Hit[fNof_plastic_TRIG + 1];
+        PMT_TRIG_Hit[0] = (*PMT_TRIG_HC)[PMT_TRIG_HC->entries() - 1];
+
+#endif
 
 #ifdef isWLSFiber
-        // auto WLSsipm_HC = GetHitsCollection_SiPM(fWLSsipmCollID, event);
-        // if (!WLSsipm_HC)
-        //     return;
-        // SiPMHit *WLSsipm_Hit[fNof_WLSsipm + 1];
-        // WLSsipm_Hit[0] = (*WLSsipm_HC)[WLSsipm_HC->entries() - 1];
+        auto WLSsipm_HC = GetHitsCollection_SiPM(fWLSsipmCollID, event);
+        if (!WLSsipm_HC)
+            return;
+        SiPMHit *WLSsipm_Hit[fNof_WLSsipm + 1];
+        WLSsipm_Hit[0] = (*WLSsipm_HC)[WLSsipm_HC->entries() - 1];
 #endif
 
 #if defined(isRUN23) || defined(isRUN21)
-        // auto sipm_HC = GetHitsCollection_SiPM(fSiPMCollID, event);
-        // if (!sipm_HC)
-        //     return;
-        // SiPMHit *sipm_Hit[fNof_SiPM + 1];
-        // sipm_Hit[0] = (*sipm_HC)[sipm_HC->entries() - 1];
+        auto sipm_HC = GetHitsCollection_SiPM(fSiPMCollID, event);
+        if (!sipm_HC)
+            return;
+        SiPMHit *sipm_Hit[fNof_SiPM + 1];
+        sipm_Hit[0] = (*sipm_HC)[sipm_HC->entries() - 1];
 #endif
 
 
@@ -909,33 +915,34 @@ namespace Cosmic {
                     (StartTimeDetector::ScintHitsCollection *)(hitsCE->GetHC(fScintStartTimeDetectorCollID));
             }
 
-            // if (fSiPMCollID >= 0)
-            // {
-            //     sipmHC = (StartTimeDetector::SiPMHitsCollection *)(hitsCE->GetHC(fSiPMCollID));
-            // }
+            if (fSiPMCollID >= 0)
+            {
+                sipmHC = (StartTimeDetector::SiPMHitsCollection *)(hitsCE->GetHC(fSiPMCollID));
+            }
 
 
 #if defined(isRUN25) || defined(isFEU187)
-            // if (fPMTCollID >= 0)
-            // {
-            //     pmtHC = (StartTimeDetector::PMTHitsCollection *)(hitsCE->GetHC(fPMTCollID));
-            // }
+            if (fPMTCollID >= 0)
+            {
+                pmtHC = (StartTimeDetector::PMTHitsCollection *)(hitsCE->GetHC(fPMTCollID));
+            }
 #endif
 
-            // #ifdef TRIGCOUNT
-            //             if (fTrigCountCollID >= 0) {
-            //                 trigcountHC = (StartTimeDetector::ScintHitsCollection *)
-            //                 (hitsCE->GetHC(fTrigCountCollID));
-            //             }
-            //
-            // #endif
+#ifdef TRIGCOUNT
+            if (fTrigCountCollID >= 0)
+            {
+                trigcountHC = (StartTimeDetector::ScintHitsCollection *)(hitsCE->GetHC(fTrigCountCollID));
+            }
+
+#endif
 
 
-            // #if defined(TRIGCOUNTsmall_MCP_PMT_BC_422)
-            //             if (fTrigCount_and_PMTCollID >= 0) {
-            //                 pmt_trig_HC = (PMTHitsCollection *) (hitsCE->GetHC(fTrigCount_and_PMTCollID));
-            //             }
-            // #endif
+#if defined(TRIGCOUNTsmall_MCP_PMT_BC_422)
+            if (fTrigCount_and_PMTCollID >= 0)
+            {
+                pmt_trig_HC = (PMTHitsCollection *)(hitsCE->GetHC(fTrigCount_and_PMTCollID));
+            }
+#endif
 
 
 #ifdef isWLSFiber
@@ -2504,146 +2511,154 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
 
         // GEM
 
-// #ifdef TRIGCOUNT
-        //
-        //         if (trigcountHC) { // 1 trigcountHC
-        //             for (G4int i = 0; i <= fNof_plastic_TRIG; i++) {
-        //                 if (i >= 1) plastic_TRIG_Hit[i] = (*plastic_TRIG_HC)[i - 1];
-        //
-        //                 fPlastic_TRIGTrackID[i] = plastic_TRIG_Hit[i]->GetTrackID();
-        //                 fPlastic_TRIG_Edep[i] = plastic_TRIG_Hit[i]->GetEdep() / MeV;
-        //                 fPlastic_TRIG_LO[i] = plastic_TRIG_Hit[i]->GetLO() / MeV;
-        //                 fPlastic_TRIG_A1[i] = plastic_TRIG_Hit[i]->GetA1() / MeV;
-        //                 fPlastic_TRIG_A2[i] = plastic_TRIG_Hit[i]->GetA2() / MeV;
-        //
-        //                 // G4cerr << "!!! = " <<   fPlastic_TRIG_Edep[i] << G4endl;
-        //
-        //                 fPlastic_TRIG_TrackLength[i] = plastic_TRIG_Hit[i]->GetTrackLength() /  cm;
-        //
-        //                 // G4cerr << "TRIG LO = " << plastic_TRIG_Hit[i]->GetLO() / MeV << " Edep = " <<
-        //                 plastic_TRIG_Hit[i]->GetEdep() / MeV << " length = "<< plastic_TRIG_Hit[i]->GetTrackLength()
-        //                 / cm << " i = " << i << G4endl;
-        //                 //  G4cerr << "TRIG  i= " << i << " Edep= " << plastic_TRIG_Hit[i]->GetEdep() / MeV << " Zloc
-        //                 = " << plastic_TRIG_Hit[i]->GetLocalPos().z() / cm<< " Zglob = " <<
-        //                 plastic_TRIG_Hit[i]->GetWorldPos().z() / cm<<G4endl;
-        //
-        //
-        //                 fPlastic_TRIG_XPos[i] = plastic_TRIG_Hit[i]->GetLocalPos().x() / cm;
-        //                 fPlastic_TRIG_YPos[i] = plastic_TRIG_Hit[i]->GetLocalPos().y() / cm;
-        //                 fPlastic_TRIG_ZPos[i] = plastic_TRIG_Hit[i]->GetLocalPos().z() / cm;
-        //                 fPlastic_TRIG_global_XPos[i] = plastic_TRIG_Hit[i]->GetWorldPos().x() / cm;
-        //                 fPlastic_TRIG_global_YPos[i] = plastic_TRIG_Hit[i]->GetWorldPos().y() / cm;
-        //                 fPlastic_TRIG_global_ZPos[i] = plastic_TRIG_Hit[i]->GetWorldPos().z() / cm;
-        //
-        //                 fPlastic_TRIG_Theta[i] = plastic_TRIG_Hit[i]->GetPosTheta() / degree;
-        //                 fPlastic_TRIG_Phi[i] = plastic_TRIG_Hit[i]->GetPosPhi() / degree;
-        //
-        //                 // fPlastic_TRIG_Theta[i] = (plastic_TRIG_Hit[i]->GetWorldPos() -
-        //                 primary_vertex->GetPosition()).
-        //                 //     theta() / degree;
-        //                 // fPlastic_TRIG_Phi[i] = (plastic_TRIG_Hit[i]->GetWorldPos() -
-        //                 primary_vertex->GetPosition()).phi() /
-        //                 //     degree;
-        //
-        //                 fPlastic_TRIG_ThetaGlob[i] = plastic_TRIG_Hit[i]->GetPosThetaGlob() / degree;
-        //                 fPlastic_TRIG_PhiGlob[i] = plastic_TRIG_Hit[i]->GetPosPhiGlob() / degree;
-        //
-        //                 if (plastic_TRIG_Hit[i]->GetEdep() > plastic_TRIG_threshold) {
-        //                     //  if (flaq_is_trig_tof_TRIG1[i] == true)
-        //                     //  {
-        //
-        //                     fPlastic_TRIG_T1[i] = plastic_TRIG_Hit[i]->GetT1() / ns;
-        //                     fPlastic_TRIG_T2[i] = plastic_TRIG_Hit[i]->GetT2() / ns;
-        //                     fPlastic_TRIG_ToF[i] = plastic_TRIG_Hit[i]->GetToF() / ns;
-        //                     flaq_is_trig_tof_TRIG[i] = false;
-        //                     //  }
-        //
-        //                     de_TRIG_dep[i] = 1;
-        //                 }
-        //
-        //             }
-        //
-        //
-        //         }
-        //
-        // #endif
+#ifdef TRIGCOUNT
+
+        if (trigcountHC)
+        { // 1 trigcountHC
+            for (G4int i = 0; i <= fNof_plastic_TRIG; i++)
+            {
+                if (i >= 1)
+                    plastic_TRIG_Hit[i] = (*plastic_TRIG_HC)[i - 1];
+
+                fPlastic_TRIGTrackID[i] = plastic_TRIG_Hit[i]->GetTrackID();
+                fPlastic_TRIG_Edep[i] = plastic_TRIG_Hit[i]->GetEdep() / MeV;
+                fPlastic_TRIG_LO[i] = plastic_TRIG_Hit[i]->GetLO() / MeV;
+                fPlastic_TRIG_A1[i] = plastic_TRIG_Hit[i]->GetA1() / MeV;
+                fPlastic_TRIG_A2[i] = plastic_TRIG_Hit[i]->GetA2() / MeV;
+
+                // G4cerr << "!!! = " <<   fPlastic_TRIG_Edep[i] << G4endl;
+
+                fPlastic_TRIG_TrackLength[i] = plastic_TRIG_Hit[i]->GetTrackLength() / cm;
+
+                // G4cerr << "TRIG LO = " << plastic_TRIG_Hit[i]->GetLO() / MeV << " Edep = " <<
+                plastic_TRIG_Hit[i]->GetEdep() / MeV << " length = " << plastic_TRIG_Hit[i]->GetTrackLength() / cm
+                                                     << " i = " << i << G4endl;
+                //  G4cerr << "TRIG  i= " << i << " Edep= " << plastic_TRIG_Hit[i]->GetEdep() / MeV << " Zloc
+                = " << plastic_TRIG_Hit[i]->GetLocalPos().z() / cm<< " Zglob = " <<
+                                                                               plastic_TRIG_Hit[i]
+                                                                                   ->GetWorldPos()
+                                                                                   .z() /
+                        cm
+                    << G4endl;
+
+
+                fPlastic_TRIG_XPos[i] = plastic_TRIG_Hit[i]->GetLocalPos().x() / cm;
+                fPlastic_TRIG_YPos[i] = plastic_TRIG_Hit[i]->GetLocalPos().y() / cm;
+                fPlastic_TRIG_ZPos[i] = plastic_TRIG_Hit[i]->GetLocalPos().z() / cm;
+                fPlastic_TRIG_global_XPos[i] = plastic_TRIG_Hit[i]->GetWorldPos().x() / cm;
+                fPlastic_TRIG_global_YPos[i] = plastic_TRIG_Hit[i]->GetWorldPos().y() / cm;
+                fPlastic_TRIG_global_ZPos[i] = plastic_TRIG_Hit[i]->GetWorldPos().z() / cm;
+
+                fPlastic_TRIG_Theta[i] = plastic_TRIG_Hit[i]->GetPosTheta() / degree;
+                fPlastic_TRIG_Phi[i] = plastic_TRIG_Hit[i]->GetPosPhi() / degree;
+
+                // fPlastic_TRIG_Theta[i] = (plastic_TRIG_Hit[i]->GetWorldPos() -
+                        primary_vertex->GetPosition()).
+                        //     theta() / degree;
+                        // fPlastic_TRIG_Phi[i] = (plastic_TRIG_Hit[i]->GetWorldPos() -
+                        primary_vertex->GetPosition()).phi() /
+                        //     degree;
+
+                        fPlastic_TRIG_ThetaGlob[i] = plastic_TRIG_Hit[i]->GetPosThetaGlob() / degree;
+                        fPlastic_TRIG_PhiGlob[i] = plastic_TRIG_Hit[i]->GetPosPhiGlob() / degree;
+
+                        if (plastic_TRIG_Hit[i]->GetEdep() > plastic_TRIG_threshold)
+                        {
+                            //  if (flaq_is_trig_tof_TRIG1[i] == true)
+                            //  {
+
+                            fPlastic_TRIG_T1[i] = plastic_TRIG_Hit[i]->GetT1() / ns;
+                            fPlastic_TRIG_T2[i] = plastic_TRIG_Hit[i]->GetT2() / ns;
+                            fPlastic_TRIG_ToF[i] = plastic_TRIG_Hit[i]->GetToF() / ns;
+                            flaq_is_trig_tof_TRIG[i] = false;
+                            //  }
+
+                            de_TRIG_dep[i] = 1;
+                        }
+            }
+        }
+
+#endif
 
 
         ////// PMT TRIG
 
-        // #ifdef TRIGCOUNTsmall_MCP_PMT_BC_422
-        //
-        //         if (1) {
-        //             for (G4int i = 0; i <= fNof_plastic_TRIG; i++) {
-        //                 if (i >= 1)
-        //                 {
-        //                     // i-=1;
-        //                     PMT_TRIG_Hit[i] = (*PMT_TRIG_HC)[i - 1 + 0];
-        //                 }
-        //
-        //                 //fPMT_TRIGTrackID[i] = PMT_Hit[i]->GetTrackID();
-        //
-        //                 fPMT_TRIG_TrackLength[i] = PMT_TRIG_Hit[i]->GetTrackLength() /  cm;
-        //
-        //                 //  G4cerr << "SCINT LO = " << PMT_TRIG_Hit[i]->GetLO() / MeV << " Edep = " <<
-        //                 PMT_TRIG_Hit[i]->GetEdep() / MeV << " length = "<< PMT_TRIG_Hit[i]->GetTrackLength() / cm <<
-        //                 " i = " << i << G4endl;
-        //
-        //
-        //                 // fPMT_TRIG_XPos[i] = PMT_TRIG_Hit[i]->GetLocalPos().x() / cm;
-        //                 // fPMT_TRIG_YPos[i] = PMT_TRIG_Hit[i]->GetLocalPos().y() / cm;
-        //                 // fPMT_TRIG_ZPos[i] = PMT_TRIG_Hit[i]->GetLocalPos().z() / cm;
-        //                 // fPMT_TRIG_global_XPos[i] = PMT_TRIG_Hit[i]->GetWorldPos().x() / cm;
-        //                 // fPMT_TRIG_global_YPos[i] = PMT_TRIG_Hit[i]->GetWorldPos().y() / cm;
-        //                 // fPMT_TRIG_global_ZPos[i] = PMT_TRIG_Hit[i]->GetWorldPos().z() / cm;
-        //
-        //                 // fPMT_TRIG_Theta[i] = PMT_TRIG_Hit[i]->GetPosTheta() / degree;
-        //                 // fPMT_TRIG_Phi[i] = PMT_TRIG_Hit[i]->GetPosPhi() / degree;
-        //
-        //                 // fPMT_TRIG_Theta[i] = (PMT_TRIG_Hit[i]->GetWorldPos() - primary_vertex->GetPosition()).
-        //                 //     theta() / degree;
-        //                 // fPMT_TRIG_Phi[i] = (PMT_TRIG_Hit[i]->GetWorldPos() - primary_vertex->GetPosition()).phi()
-        //                 /
-        //                 //     degree;
-        //
-        //                 //fPMT_TRIG_ThetaGlob[i] = PMT_TRIG_Hit[i]->GetPosThetaGlob() / degree;
-        //                 // fPMT_TRIG_PhiGlob[i] = PMT_TRIG_Hit[i]->GetPosPhiGlob() / degree;
-        //
-        //                 fPMT_TRIG_PhotonNumber[i] = PMT_TRIG_Hit[i]->GetPhotonCount();
-        //                 fPMT_TRIG_PhotonNumberScintil[i] = PMT_TRIG_Hit[i]->GetPhotonCountScintil();
-        //                 fPMT_TRIG_PhotonNumberCherenkov[i] = PMT_TRIG_Hit[i]->GetPhotonCountCherenkov();
-        //
-        //                 //   G4cerr << "!!! = " << fPMT_TRIG_PhotonNumber[i]<< G4endl;
-        //
-        //                 if (fPMT_TRIG_PhotonNumber[i] >=1) {
-        //                     for (G4int nph = 1; nph <= fPMT_TRIG_PhotonNumber[i]; nph++) {
-        //                         // fPMT_TRIG_ToFN[i][nph] = PMT_TRIG_Hit[i]->GetToFNph(nph) / ns;
-        //
-        //                         if (i == 1) fPMT_TRIG_ToF1N[nph] = PMT_TRIG_Hit[i]->GetToFNph(nph) / ns;
-        //                         if (i == 2) fPMT_TRIG_ToF2N[nph] = PMT_TRIG_Hit[i]->GetToFNph(nph) / ns;
-        //
-        //                     }
-        //                 }
-        //
-        //                 if (PMT_TRIG_Hit[i]->GetPhotonCount() >= PMT_threshold) {
-        //                     //  if (flaq_is_SCINT_tof_SCINT1[i] == true)
-        //                     //  {
-        //
-        //
-        //                     fPMT_TRIG_ToF[i] = PMT_TRIG_Hit[i]->GetToF() / ns;
-        //                     flaq_is_trig_tof_TRIG_and_PMT[i] = false;
-        //                     //  }
-        //
-        //                     de_PMT_TRIG_dep[i] = 1;
-        //                     de_PMT_TRIG_dep[0] = 1;
-        //                 }
-        //
-        //             }
-        //
-        //
-        //         }
-        //
-        // #endif
+#ifdef TRIGCOUNTsmall_MCP_PMT_BC_422
+
+        if (1)
+        {
+            for (G4int i = 0; i <= fNof_plastic_TRIG; i++)
+            {
+                if (i >= 1)
+                {
+                    // i-=1;
+                    PMT_TRIG_Hit[i] = (*PMT_TRIG_HC)[i - 1 + 0];
+                }
+
+                // fPMT_TRIGTrackID[i] = PMT_Hit[i]->GetTrackID();
+
+                fPMT_TRIG_TrackLength[i] = PMT_TRIG_Hit[i]->GetTrackLength() / cm;
+
+                //  G4cerr << "SCINT LO = " << PMT_TRIG_Hit[i]->GetLO() / MeV << " Edep = " <<
+                PMT_TRIG_Hit[i]->GetEdep() / MeV << " length = " << PMT_TRIG_Hit[i]->GetTrackLength() / cm
+                                                 << " i = " << i << G4endl;
+
+
+                // fPMT_TRIG_XPos[i] = PMT_TRIG_Hit[i]->GetLocalPos().x() / cm;
+                // fPMT_TRIG_YPos[i] = PMT_TRIG_Hit[i]->GetLocalPos().y() / cm;
+                // fPMT_TRIG_ZPos[i] = PMT_TRIG_Hit[i]->GetLocalPos().z() / cm;
+                // fPMT_TRIG_global_XPos[i] = PMT_TRIG_Hit[i]->GetWorldPos().x() / cm;
+                // fPMT_TRIG_global_YPos[i] = PMT_TRIG_Hit[i]->GetWorldPos().y() / cm;
+                // fPMT_TRIG_global_ZPos[i] = PMT_TRIG_Hit[i]->GetWorldPos().z() / cm;
+
+                // fPMT_TRIG_Theta[i] = PMT_TRIG_Hit[i]->GetPosTheta() / degree;
+                // fPMT_TRIG_Phi[i] = PMT_TRIG_Hit[i]->GetPosPhi() / degree;
+
+                // fPMT_TRIG_Theta[i] = (PMT_TRIG_Hit[i]->GetWorldPos() - primary_vertex->GetPosition()).
+                //     theta() / degree;
+                // fPMT_TRIG_Phi[i] = (PMT_TRIG_Hit[i]->GetWorldPos() - primary_vertex->GetPosition()).phi()
+                /
+                    //     degree;
+
+                    // fPMT_TRIG_ThetaGlob[i] = PMT_TRIG_Hit[i]->GetPosThetaGlob() / degree;
+                    //  fPMT_TRIG_PhiGlob[i] = PMT_TRIG_Hit[i]->GetPosPhiGlob() / degree;
+
+                    fPMT_TRIG_PhotonNumber[i] = PMT_TRIG_Hit[i]->GetPhotonCount();
+                fPMT_TRIG_PhotonNumberScintil[i] = PMT_TRIG_Hit[i]->GetPhotonCountScintil();
+                fPMT_TRIG_PhotonNumberCherenkov[i] = PMT_TRIG_Hit[i]->GetPhotonCountCherenkov();
+
+                //   G4cerr << "!!! = " << fPMT_TRIG_PhotonNumber[i]<< G4endl;
+
+                if (fPMT_TRIG_PhotonNumber[i] >= 1)
+                {
+                    for (G4int nph = 1; nph <= fPMT_TRIG_PhotonNumber[i]; nph++)
+                    {
+                        // fPMT_TRIG_ToFN[i][nph] = PMT_TRIG_Hit[i]->GetToFNph(nph) / ns;
+
+                        if (i == 1)
+                            fPMT_TRIG_ToF1N[nph] = PMT_TRIG_Hit[i]->GetToFNph(nph) / ns;
+                        if (i == 2)
+                            fPMT_TRIG_ToF2N[nph] = PMT_TRIG_Hit[i]->GetToFNph(nph) / ns;
+                    }
+                }
+
+                if (PMT_TRIG_Hit[i]->GetPhotonCount() >= PMT_threshold)
+                {
+                    //  if (flaq_is_SCINT_tof_SCINT1[i] == true)
+                    //  {
+
+
+                    fPMT_TRIG_ToF[i] = PMT_TRIG_Hit[i]->GetToF() / ns;
+                    flaq_is_trig_tof_TRIG_and_PMT[i] = false;
+                    //  }
+
+                    de_PMT_TRIG_dep[i] = 1;
+                    de_PMT_TRIG_dep[0] = 1;
+                }
+            }
+        }
+
+#endif
 
 
 #ifdef GEM
@@ -2823,8 +2838,8 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
 
         ////// PMT
 
-#ifdef zero
-        if (0)
+// #ifdef zero
+            if (0)
         {
             for (G4int i = 0; i <= StartTimeDetector::fNof_PMT_START_TIME_DETECTOR; i++)
             {
@@ -2897,9 +2912,9 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
                 }
             }
         }
-#endif
-        // СВЕТОВОД
-#ifdef zero
+// #endif
+        //  СВЕТОВОД
+// #ifdef zero
         if (0)
         {
             for (G4int i = 0; i <= StartTimeDetector::fNof_PMT_START_TIME_DETECTOR; i++)
@@ -2957,7 +2972,7 @@ fVC_N[1].assign(fVC_N[1].size(), 0);
                 // }
             }
         }
-#endif
+// #endif
 
 #endif
 
