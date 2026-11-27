@@ -81,8 +81,10 @@ namespace Cosmic
 
 
         // Egamma = virtual_photon_random(360., 650.) * MeV;
-        Egamma = virtual_photon_random(400., 640.) * MeV;
+        // Egamma = virtual_photon_random(400., 640.) * MeV;
+        Egamma = virtual_photon_random(0.5 * Ebeam, 0.8 * Ebeam) * MeV;
         //  Egamma = virtual_photon_random(150., 780.) * MeV;
+        // Egamma = virtual_photon_random(20., 780.) * MeV;
 
         //  Egamma = 0.;
         //  Egamma = virtual_photon_random(350., 680.) * MeV;
@@ -102,7 +104,12 @@ namespace Cosmic
             }
         }
 
-        //  kinetic_energy = Ebeam * MeV;
+        // kinetic_energy = (G4UniformRand() > 0.5) ? 160.0 * MeV : 400.0 * MeV;
+        // kinetic_energy = (G4UniformRand() > 0.5) ? 0.2 * Ebeam * MeV : 0.5 * Ebeam * MeV;
+
+        // kinetic_energy = 800 * MeV;
+
+        // kinetic_energy = Ebeam * MeV;
 
         // kinetic_energy = 350.0 * MeV;
         //  kinetic_energy = 200.0 * MeV;
@@ -409,7 +416,7 @@ namespace Cosmic
             PhotonBr_4vec_from_Ebeam.rotateUz(rot_vec.unit());
             fParticleGun->SetParticleMomentumDirection((PhotonBr_4vec_from_Ebeam.getV()).unit());
             //  fParticleGun->SetParticleMomentumDirection(rot_vec);
-            fParticleGun->GeneratePrimaryVertex(event);
+            //   fParticleGun->GeneratePrimaryVertex(event);
         }
     }
 
